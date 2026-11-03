@@ -1,0 +1,8 @@
+name=Survivor PDA Orchestrator
+id=SurvivorPDAOrchestrator
+author=Maeiro
+description=An adaptive event director for Survivor PDA (ProjectRPGExpanded), including configurable Night Events.
+modversion=0.2.0
+versionMin=42.21.0
+require=ProjectRPGExpanded,ZombieBuddy
+loadModAfter=ProjectRPGExpanded,ExtractionMode,ZombieBuddy

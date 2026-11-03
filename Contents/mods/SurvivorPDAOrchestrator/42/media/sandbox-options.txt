@@ -1,0 +1,702 @@
+VERSION = 1,
+
+option ProjectRPGExpanded.SPDO_Enabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_Enabled,
+    default = false,
+}
+
+option ProjectRPGExpanded.SPDO_Preset
+{
+    type = enum,
+    page = SPDO_Orchestrator,
+    translation = SPDO_Preset,
+    default = 1,
+    numValues = 4,
+}
+
+option ProjectRPGExpanded.SPDO_IntervalMin
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_IntervalMin,
+    default = 60,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_IntervalMax
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_IntervalMax,
+    default = 120,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_RetryMinutes
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_RetryMinutes,
+    default = 5,
+    min = 1,
+    max = 60,
+}
+
+option ProjectRPGExpanded.SPDO_HealthMin
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_HealthMin,
+    default = 80,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_EnduranceMin
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_EnduranceMin,
+    default = 60,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_FatigueMax
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_FatigueMax,
+    default = 60,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_BlockBleeding
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_BlockBleeding,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_DamageGrace
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_DamageGrace,
+    default = 10,
+    min = 0,
+    max = 120,
+}
+
+option ProjectRPGExpanded.SPDO_JoinGrace
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_JoinGrace,
+    default = 15,
+    min = 0,
+    max = 120,
+}
+
+option ProjectRPGExpanded.SPDO_BlockSleeping
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_BlockSleeping,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_BlockVehicles
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_BlockVehicles,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_NeighborRadius
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NeighborRadius,
+    default = 100,
+    min = 0,
+    max = 500,
+}
+
+option ProjectRPGExpanded.SPDO_RecoveryMinutes
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_RecoveryMinutes,
+    default = 20,
+    min = 0,
+    max = 240,
+}
+
+option ProjectRPGExpanded.SPDO_KillThreshold
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_KillThreshold,
+    default = 20,
+    min = 0,
+    max = 1000,
+}
+
+option ProjectRPGExpanded.SPDO_ExtractionProtection
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_ExtractionProtection,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_HordeEnabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_HordeEnabled,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_NightThreatMultiplier
+{
+    type = double,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightThreatMultiplier,
+    default = 1,
+    min = 0,
+    max = 3,
+}
+
+option ProjectRPGExpanded.SPDO_ThreatChance1
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_ThreatChance1,
+    default = 10,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_ThreatChance2
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_ThreatChance2,
+    default = 15,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_ThreatChance3
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_ThreatChance3,
+    default = 20,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_ThreatChance4
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_ThreatChance4,
+    default = 25,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_ThreatChance5
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_ThreatChance5,
+    default = 30,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_NightEventsEnabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightEventsEnabled,
+    default = false,
+}
+
+option ProjectRPGExpanded.SPDO_NightEventsChance
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightEventsChance,
+    default = 50,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel1Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel1Weight,
+    default = 50,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel1LootBonus
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel1LootBonus,
+    default = 50,
+    min = 0,
+    max = 500,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel1SprinterPercentage
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel1SprinterPercentage,
+    default = 10,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel2Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel2Weight,
+    default = 35,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel2LootBonus
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel2LootBonus,
+    default = 100,
+    min = 0,
+    max = 500,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel2SprinterPercentage
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel2SprinterPercentage,
+    default = 20,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel3Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel3Weight,
+    default = 10,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel3LootBonus
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel3LootBonus,
+    default = 150,
+    min = 0,
+    max = 500,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel3SprinterPercentage
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel3SprinterPercentage,
+    default = 33,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel4Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel4Weight,
+    default = 5,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel4LootBonus
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel4LootBonus,
+    default = 200,
+    min = 0,
+    max = 500,
+}
+
+option ProjectRPGExpanded.SPDO_NightLevel4SprinterPercentage
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLevel4SprinterPercentage,
+    default = 50,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_xp_Enabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_xp_Enabled,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_xp_Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_xp_Weight,
+    default = 25,
+    min = 0,
+    max = 1000,
+}
+
+option ProjectRPGExpanded.SPDO_xp_Value
+{
+    type = double,
+    page = SPDO_Orchestrator,
+    translation = SPDO_xp_Value,
+    default = 1.5,
+    min = 1.1,
+    max = 10,
+}
+
+option ProjectRPGExpanded.SPDO_xp_DurationMin
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_xp_DurationMin,
+    default = 10,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_xp_DurationMax
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_xp_DurationMax,
+    default = 15,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_money_Enabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_money_Enabled,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_money_Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_money_Weight,
+    default = 20,
+    min = 0,
+    max = 1000,
+}
+
+option ProjectRPGExpanded.SPDO_money_Value
+{
+    type = double,
+    page = SPDO_Orchestrator,
+    translation = SPDO_money_Value,
+    default = 1.5,
+    min = 1.1,
+    max = 10,
+}
+
+option ProjectRPGExpanded.SPDO_money_DurationMin
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_money_DurationMin,
+    default = 10,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_money_DurationMax
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_money_DurationMax,
+    default = 15,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_box_Enabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_box_Enabled,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_box_Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_box_Weight,
+    default = 10,
+    min = 0,
+    max = 1000,
+}
+
+option ProjectRPGExpanded.SPDO_box_Value
+{
+    type = double,
+    page = SPDO_Orchestrator,
+    translation = SPDO_box_Value,
+    default = 2,
+    min = 0.5,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_box_DurationMin
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_box_DurationMin,
+    default = 10,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_box_DurationMax
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_box_DurationMax,
+    default = 15,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_blood_Enabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_blood_Enabled,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_blood_Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_blood_Weight,
+    default = 15,
+    min = 0,
+    max = 1000,
+}
+
+option ProjectRPGExpanded.SPDO_blood_Value
+{
+    type = double,
+    page = SPDO_Orchestrator,
+    translation = SPDO_blood_Value,
+    default = 10,
+    min = 0.5,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_blood_DurationMin
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_blood_DurationMin,
+    default = 10,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_blood_DurationMax
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_blood_DurationMax,
+    default = 15,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_soul_Enabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_soul_Enabled,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_soul_Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_soul_Weight,
+    default = 10,
+    min = 0,
+    max = 1000,
+}
+
+option ProjectRPGExpanded.SPDO_soul_Value
+{
+    type = double,
+    page = SPDO_Orchestrator,
+    translation = SPDO_soul_Value,
+    default = 10,
+    min = 0.5,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_soul_DurationMin
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_soul_DurationMin,
+    default = 10,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_soul_DurationMax
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_soul_DurationMax,
+    default = 15,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_marrow_Enabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_marrow_Enabled,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_marrow_Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_marrow_Weight,
+    default = 10,
+    min = 0,
+    max = 1000,
+}
+
+option ProjectRPGExpanded.SPDO_marrow_Value
+{
+    type = double,
+    page = SPDO_Orchestrator,
+    translation = SPDO_marrow_Value,
+    default = 10,
+    min = 0.5,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_marrow_DurationMin
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_marrow_DurationMin,
+    default = 10,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_marrow_DurationMax
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_marrow_DurationMax,
+    default = 15,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_bile_Enabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_bile_Enabled,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_bile_Weight
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_bile_Weight,
+    default = 10,
+    min = 0,
+    max = 1000,
+}
+
+option ProjectRPGExpanded.SPDO_bile_Value
+{
+    type = double,
+    page = SPDO_Orchestrator,
+    translation = SPDO_bile_Value,
+    default = 10,
+    min = 0.5,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_bile_DurationMin
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_bile_DurationMin,
+    default = 10,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_bile_DurationMax
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_bile_DurationMax,
+    default = 15,
+    min = 1,
+    max = 1440,
+}
