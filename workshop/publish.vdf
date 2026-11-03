@@ -6,6 +6,13 @@
     "previewfile" "C:/PZMods/SurvivorPDAOrchestrator/thumbnail.png"
     "visibility" "0"
     "title" "Survivor PDA Orchestrator"
-    "description" "[h1]Survivor PDA Orchestrator[/h1] An adaptive event director for Project Zomboid and Survivor PDA (ProjectRPGExpanded). Runs in single player and multiplayer. The director is disabled by default.\n\n[h2]Features[/h2] [list][*]Schedules opportunities, threats and rest, using native XP, Mystery Box Hunt, money, material and horde events.[*]Adapts to World Danger and survivor condition, with protections for injured survivors, recent damage, intense combat and vulnerable nearby players.[*]Uses native ProjectRPG rewards, synchronization and event durations. It does not replace or end events started by admins or tickets.[*]Night Events are independently configurable, disabled by default, and can overlap other events. The default chance is 50% per night; four weighted levels tune container loot chance and sprinter presence.[*]Admins can start or end a Night Event in PDA Admin. Manual starts require Night Events to be enabled and it to be nighttime.[*]PDA Admin includes settings, diagnostics and a control to request an immediate director decision.[*]English and Brazilian Portuguese follow the PDA language. Extraction Mode support is optional.[/list]\n\n[h2]Requirements[/h2] Project Zomboid Build 42.21+, ProjectRPGExpanded and ZombieBuddy 2.3.4+. Extraction Mode is optional.\n\nWorkshop ID: 3833288237\nMod ID: SurvivorPDAOrchestrator"
+    "description" "[h1]Survivor PDA Orchestrator[/h1] An adaptive event director for Project Zomboid and Survivor PDA (ProjectRPGExpanded). Runs in single player and multiplayer. The director is disabled by default.
+
+[h2]Features[/h2] [list][*]Schedules opportunities, threats and rest, using native XP, Mystery Box Hunt, money, material and horde events.[*]Adapts to World Danger and survivor condition, with protections for injured survivors, recent damage, intense combat and vulnerable nearby players.[*]Uses native ProjectRPG rewards, synchronization and event durations. It does not replace or end events started by admins or tickets.[*]Night Events are independently configurable, disabled by default, and can overlap other events. The default chance is 50% per night; four weighted levels tune container loot chance and sprinter presence.[*]Admins can start or end a Night Event in PDA Admin. Manual starts require Night Events to be enabled and it to be nighttime.[*]PDA Admin includes settings, diagnostics and a control to request an immediate director decision.[*]English and Brazilian Portuguese follow the PDA language. Extraction Mode support is optional.[/list]
+
+[h2]Requirements[/h2] Project Zomboid Build 42.21+, ProjectRPGExpanded and ZombieBuddy 2.3.4+. Extraction Mode is optional.
+
+Workshop ID: 3833288237
+Mod ID: SurvivorPDAOrchestrator"
     "changenote" "Initial release metadata finalized."
 }
