@@ -8,7 +8,7 @@ Enable **Survivor PDA Orchestrator** in the game's mod list together with Projec
 
 The Orchestrator category has Diagnostics, General, Protection, Events and Night Events tabs. Settings edited in the PDA use ProjectRPG's existing world overrides and synchronization. Custom interval fields apply only to the Custom preset. Reversed interval and duration bounds are ordered automatically. Changing the effective interval starts a new countdown; other changes apply to the next decision. Presets affect frequency only.
 
-Night Events are independent of the director's event schedule and can run at the same time as XP, drops, boxes or a horde. They are disabled by default and have a 50% chance to occur on each night when enabled. On a successful night, the configured level weights choose the loot chance bonus and sprinter chance. The active event appears in the PDA event HUD with its icon and current bonuses. The server rolls and synchronizes the event and level once per night. Defaults remain weights 50/35/10/5, loot chance bonuses 50/100/150/200%, and sprinter chances 10/20/33/50%.
+Night Events are independent of the director's event schedule and can run at the same time as XP, drops, boxes or a horde. They are disabled by default and have a 50% chance to occur on each night when enabled. On a successful night, the configured level weights choose the loot chance bonus and sprinter chance. The active event appears in the PDA event HUD with its icon and current bonuses. Admins can start or end a Night Event in PDA Admin; starting one manually requires Night Events to be enabled and it to be nighttime. The server rolls and synchronizes the event and level once per night. Defaults remain weights 50/35/10/5, loot chance bonuses 50/100/150/200%, and sprinter chances 10/20/33/50%.
 
 ## Decisions and timing
 
@@ -26,7 +26,7 @@ The director reuses native XP, Mystery Box Hunt, money, Evil Blood, Evil Souls, 
 
 The director waits for existing events before starting its own, never overwrites or ends admin/ticket events, and respects native horde size, duration, cooldown and the HordesEnabled switch. **Native kill-triggered hordes remain independent and may still occur during director protection/rest periods.** Events started externally after a director event may overlap it. Switching the director off lets already running events end normally.
 
-Unavailable native APIs disable only affected event adapters until a Lua reload/restart and appear in diagnostics and console logs. No external AI service, inventory scans, world population scans or player-issued event-start commands are used.
+Unavailable native APIs disable only affected event adapters until a Lua reload/restart and appear in diagnostics and console logs. No external AI service or inventory and world population scans are used.
 
 ## Development and installation
 

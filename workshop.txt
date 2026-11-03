@@ -1,6 +1,6 @@
 version=1
 id=0
 title=Survivor PDA Orchestrator
-description=An adaptive event director for Survivor PDA (ProjectRPGExpanded), with configurable night luck events that can overlap other events. Includes opportunities, hordes, survivor protections, admin diagnostics and optional Extraction Mode awareness. Disabled by default.
+description=An adaptive event director for Survivor PDA (ProjectRPGExpanded), with configurable Night Events that can overlap other events and be controlled manually by admins. Includes opportunities, hordes, survivor protections, diagnostics and optional Extraction Mode awareness. Disabled by default.
 tags=Build 42;Interface;Multiplayer;Balance
 visibility=public
