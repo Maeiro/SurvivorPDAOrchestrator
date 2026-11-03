@@ -8,6 +8,8 @@
     "title" "Survivor PDA Orchestrator"
     "description" "[h1]Survivor PDA Orchestrator[/h1] An adaptive event director for Project Zomboid and Survivor PDA (ProjectRPGExpanded). Runs in single player and multiplayer. The director is disabled by default.
 
+[h2]Using PDA Admin[/h2] First enable the ProjectRPGExpanded Admin Panel in the game's Sandbox Options. Then open PDA Admin with Shift + F7 (the default key binding) and enable Orchestrator inside the panel. These are separate settings: enabling Admin Panel makes PDA Admin available; enabling Orchestrator starts the director.
+
 [h2]Features[/h2] [list][*]Schedules opportunities, threats and rest, using native XP, Mystery Box Hunt, money, material and horde events.[*]Adapts to World Danger and survivor condition, with protections for injured survivors, recent damage, intense combat and vulnerable nearby players.[*]Uses native ProjectRPG rewards, synchronization and event durations. It does not replace or end events started by admins or tickets.[*]Night Events are independently configurable, disabled by default, and can overlap other events. The default chance is 50% per night; four weighted levels tune container loot chance and sprinter presence.[*]Admins can start or end a Night Event in PDA Admin. Manual starts require Night Events to be enabled and it to be nighttime.[*]PDA Admin includes settings, diagnostics and a control to request an immediate director decision.[*]English and Brazilian Portuguese follow the PDA language. Extraction Mode support is optional.[/list]
 
 [h2]Requirements[/h2] Project Zomboid Build 42.21+, ProjectRPGExpanded and ZombieBuddy 2.3.4+. Extraction Mode is optional.
