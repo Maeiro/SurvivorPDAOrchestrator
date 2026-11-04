@@ -132,6 +132,9 @@ if not Panel._spdoSection then
                 elseif not night.enabled then status = T('NightStatusDisabled')
                 elseif not night.isNight then status = T('NightStatusDay')
                 else status = T('NightStatusInactive') end
+                if night.isNight then
+                    status = status .. ' — ' .. string.format(T('NightSprintersConverted'), tonumber(night.sprintersConverted) or 0)
+                end
             end
             self:text(T('NightEventStatus') .. ': ' .. status, area.x + 4, area.y + 42, Skin.TEXT, UIFont.Small, area.w - 8)
             if snapshot and snapshot.nightResult then

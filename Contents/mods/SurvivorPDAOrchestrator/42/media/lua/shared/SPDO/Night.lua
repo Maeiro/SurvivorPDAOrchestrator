@@ -73,6 +73,7 @@ local function getNightLevel(cycle, levels)
         local legacy = ModData.get and ModData.get(legacyNightDataKey)
         local migratedLevel = legacy and tonumber(legacy.nightCycle) == cycle and tonumber(legacy.level)
         data.nightCycle = cycle
+        data.sprintersConverted = 0
         if migratedLevel then
             data.active = legacy.active ~= false
             data.level = clamp(migratedLevel, 1, 4, 1)
@@ -89,10 +90,19 @@ local function refresh()
     local gameTime = getGameTime and getGameTime()
     if not gameTime then return end
 
-    local ok, isNight, nightCycle = pcall(function()
-        return gameTime:isNight(), getNightCycle(gameTime)
-    end)
-    if not ok then return end
+    local isNight, nightCycle
+    if getClimateManager then
+        local climate = getClimateManager()
+        if not climate or not climate.getSeason or not climate:getSeason() then return end
+        isNight = gameTime:isNight()
+        nightCycle = getNightCycle(gameTime)
+    else
+        local ok
+        ok, isNight, nightCycle = pcall(function()
+            return gameTime:isNight(), getNightCycle(gameTime)
+        end)
+        if not ok then return end
+    end
 
     Night.enabled = Config.Get('NightEventsEnabled') == true
     Night.isNight = isNight
@@ -127,6 +137,7 @@ function Night.StartManual()
     data.nightCycle = Night.nightCycle
     data.active = true
     data.level = chooseLevel(Night.levels)
+    data.sprintersConverted = 0
     transmit()
     refresh()
     return true, 'NightStarted'
@@ -147,12 +158,22 @@ end
 
 function Night.Status()
     refresh()
+    local data = ModData and ModData.get and ModData.get(nightDataKey)
     return {
         enabled = Night.enabled,
         isNight = Night.isNight,
         active = Night.active,
         level = Night.level,
+        sprintersConverted = data and tonumber(data.sprintersConverted) or 0,
     }
+end
+
+function Night.RecordSprinter()
+    if isMultiplayer and isMultiplayer() and not (isServer and isServer()) then return end
+    if not ModData or not ModData.getOrCreate then return end
+    local data = ModData.getOrCreate(nightDataKey)
+    if tonumber(data.nightCycle) ~= Night.nightCycle then return end
+    data.sprintersConverted = (tonumber(data.sprintersConverted) or 0) + 1
 end
 
 Night.refresh = refresh

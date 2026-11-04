@@ -1,41 +1,37 @@
-local Night = require 'SPDO/Night'
+local Sprinters = require 'SPDO/NightSprinterLogic'
 
-local checkedNightKey = 'ViewpointExtractionSupportNightCycle'
-local originalSpeedKey = 'ViewpointExtractionSupportOriginalSpeed'
-local sprinterKey = 'ViewpointExtractionSupportNightSprinter'
+local cursor = 0
 
-local function restoreSpeed(zombie, data)
-    if data[sprinterKey] then
-        zombie:doZombieSpeed(data[originalSpeedKey])
-        data[sprinterKey] = nil
-        data[originalSpeedKey] = nil
+Sprinters.InstallWorldDangerPriority()
+
+local function onZombie(zombie)
+    Sprinters.Process(zombie)
+end
+
+local function onMinute()
+    Sprinters.InstallWorldDangerPriority()
+    local cell = getCell and getCell() or nil
+    local zombies = cell and cell.getZombieList and cell:getZombieList() or nil
+    if not zombies or not zombies.size then return end
+
+    local size = zombies:size()
+    if size <= 0 then cursor = 0; return end
+    if cursor >= size then cursor = 0 end
+    local budget = math.min(500, size)
+    for _ = 1, budget do
+        local zombie = zombies:get(cursor)
+        cursor = (cursor + 1) % size
+        if zombie then
+            local ok, err = pcall(Sprinters.Process, zombie)
+            if not ok and not Sprinters._serverWarning then
+                Sprinters._serverWarning = true
+                print('[Survivor PDA Orchestrator] Night sprinter update failed: ' .. tostring(err))
+            end
+        end
     end
 end
 
-local function updateZombie(zombie)
-    if not zombie then return end
-    local data = zombie:getModData()
-    if not Night.enabled then
-        restoreSpeed(zombie, data)
-        data[checkedNightKey] = nil
-        return
-    end
-    if not Night.isNight then
-        restoreSpeed(zombie, data)
-        data[checkedNightKey] = nil
-        return
-    end
-    if not Night.levelReady or data[checkedNightKey] == Night.nightCycle then return end
-
-    restoreSpeed(zombie, data)
-    data[checkedNightKey] = Night.nightCycle
-    if not Night.active then return end
-    if Night.sprinterPercentage == 0 or zombie:isCrawling()
-        or ZombRand(100) >= Night.sprinterPercentage then return end
-
-    data[originalSpeedKey] = zombie:getSpeedType()
-    data[sprinterKey] = true
-    zombie:doSprinter()
+if Events then
+    if Events.OnZombieCreate then Events.OnZombieCreate.Add(onZombie) end
+    if Events.EveryOneMinute then Events.EveryOneMinute.Add(onMinute) end
 end
-
-if Events.OnZombieUpdate then Events.OnZombieUpdate.Add(updateZombie) end

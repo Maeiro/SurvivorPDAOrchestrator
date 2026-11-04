@@ -36,6 +36,7 @@
   "UI_PRPGE_SPDO_EndNightEvent": "Encerrar evento noturno",
   "UI_PRPGE_SPDO_NightEventStatus": "Estado do evento noturno",
   "UI_PRPGE_SPDO_NightStatusActive": "Ativo — Nível %s",
+  "UI_PRPGE_SPDO_NightSprintersConverted": "Sprinters convertidos nesta noite: %s",
   "UI_PRPGE_SPDO_NightStatusDisabled": "Desativado nas configurações",
   "UI_PRPGE_SPDO_NightStatusDay": "Aguardando anoitecer",
   "UI_PRPGE_SPDO_NightStatusInactive": "Inativo nesta noite",
