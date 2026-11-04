@@ -108,7 +108,8 @@ function G.World()
     local success, stage = false, nil
     if ok and type(danger.stage) == 'function' then success, stage = pcall(danger.stage) end
     stage = number(stage)
-    return { stage = math.max(1, math.min(5, math.floor(stage or 1))), hour = getGameTime():getTimeOfDay(), known = success and stage ~= nil }
+    local night = SurvivorPDAOrchestratorNight
+    return { nightSprinters = night and night.active and night.sprinterPercentage or 0, stage = math.max(1, math.min(5, math.floor(stage or 1))), hour = getGameTime():getTimeOfDay(), known = success and stage ~= nil }
 end
 
 local function compatible(kind)

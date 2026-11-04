@@ -89,7 +89,7 @@ local function tick()
 end
 
 local function request(p, command)
-    local allowed = command == 'Get' or command == 'ForceDecision'
+    local allowed = command == 'Get' or command == 'SimulateDecision' or command == 'ForceDecision'
         or command == 'StartNightEvent' or command == 'EndNightEvent'
     if not Game.Authority() or not allowed or not p or not SettingsServer.CanEdit(p) then return false end
     if not (isServer and isServer()) and require('PRPGE_Settings').Get('AdminPanelEnabled') ~= true then return false end
@@ -131,6 +131,10 @@ local function request(p, command)
         local success, value = pcall(instance.Snapshot, instance)
         snapshot = success and value or { reason = 'InternalError', detail = tostring(value):sub(1, 180) }
     else snapshot = { reason = 'Initializing' } end
+    if command == 'SimulateDecision' and instance then
+        local success, value = pcall(instance.Simulate, instance)
+        snapshot.simulation = success and value or { reason = 'InternalError' }
+    end
     if requestResult then snapshot.requestResult = requestResult end
     if command == 'StartNightEvent' or command == 'EndNightEvent' then snapshot.nightResult = requestResult end
     local statusOK, nightStatus = pcall(Night.Status)

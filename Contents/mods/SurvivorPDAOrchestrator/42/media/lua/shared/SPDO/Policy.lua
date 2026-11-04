@@ -2,6 +2,8 @@ local P = {}
 
 function P.Blocker(player, now, get)
     if not player.known then return 'UnknownPlayerState' end
+    if get('AdaptiveEnabled') and (player.tension or 0) >= get('TensionLimit') then return 'HighTension' end
+    if get('AdaptiveEnabled') and player.groupRestUntil and now < player.groupRestUntil then return 'GroupRest' end
     if player.health < get('HealthMin') then return 'LowHealth' end
     if player.endurance * 100 < get('EnduranceMin') then return 'LowEndurance' end
     if player.fatigue * 100 > get('FatigueMax') then return 'HighFatigue' end
@@ -34,7 +36,7 @@ function P.Target(players, now, get, lastTargets)
         else candidates[#candidates + 1] = p end
     end
     table.sort(candidates, function(a, b)
-        local aa, bb = lastTargets[a.id] or -1, lastTargets[b.id] or -1
+        local aa, bb = a.groupLastTarget or lastTargets[a.id] or -1, b.groupLastTarget or lastTargets[b.id] or -1
         if aa == bb then
             if (a.level or 0) ~= (b.level or 0) then return (a.level or 0) > (b.level or 0) end
             return a.id < b.id
@@ -44,19 +46,20 @@ function P.Target(players, now, get, lastTargets)
     return candidates[1], blocked
 end
 
-function P.Opportunity(available, last, get, random)
+function P.Opportunity(available, last, get, random, weights)
+    local function weight(kind) return weights and weights[kind] or get(kind .. '_Weight') end
     local pool, total = {}, 0
     for _, kind in ipairs(available) do
-        if get(kind .. '_Enabled') and get(kind .. '_Weight') > 0 then pool[#pool + 1] = kind end
+        if get(kind .. '_Enabled') and weight(kind) > 0 then pool[#pool + 1] = kind end
     end
     if #pool > 1 then
         for i = #pool, 1, -1 do if pool[i] == last then table.remove(pool, i) end end
     end
-    for _, kind in ipairs(pool) do total = total + get(kind .. '_Weight') end
+    for _, kind in ipairs(pool) do total = total + weight(kind) end
     if total == 0 then return nil end
     local roll = random(total)
     for _, kind in ipairs(pool) do
-        roll = roll - get(kind .. '_Weight')
+        roll = roll - weight(kind)
         if roll < 0 then return kind end
     end
 end

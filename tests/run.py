@@ -35,5 +35,9 @@ assert len(keys) == len(set(keys)), 'Duplicate sandbox options'
 for language in ('EN', 'PTBR'):
     sandbox = json.loads((LUA / f'shared/Translate/{language}/Sandbox.json').read_text(encoding='utf-8'))
     assert all('Sandbox_' + key in sandbox for key in keys)
-assert (MOD / 'mod.info').read_bytes() == (MOD / '42/mod.info').read_bytes()
+root_info = dict(line.split('=', 1) for line in (MOD / 'mod.info').read_text().splitlines() if '=' in line)
+b42_info = dict(line.split('=', 1) for line in (MOD / '42/mod.info').read_text().splitlines() if '=' in line)
+assert all(b42_info.get(key) == value for key, value in root_info.items()), 'Shared metadata must match'
+assert b42_info['javaJarFile'] == 'media/java/client/SurvivorPDAOrchestrator.jar'
+assert b42_info['javaPkgName'] == 'maeiro.survivorpdaorchestrator'
 print(f'{total} behavioral assertions; Lua 5.1 syntax, translations and {len(keys)} sandbox declarations passed.')

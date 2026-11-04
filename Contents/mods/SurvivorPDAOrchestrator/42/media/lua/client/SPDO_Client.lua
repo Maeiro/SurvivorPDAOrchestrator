@@ -10,6 +10,7 @@ end
 local Text = require 'SPDO/Locale'
 local Settings = require 'PRPGE_Settings'
 local Skin = require 'PRPGE_Skin'
+local simulation
 local snapshot, receivedAt, requestedAt = nil, 0, {}
 local T = Text.Text
 
@@ -47,6 +48,24 @@ local function diagnostic(self, r)
         row(T('Players'), snapshot.players or 0)
         row(T('WorldDanger'), tostring(snapshot.stage or 1) .. ' / 5')
         row(T('WorldTime'), string.format('%.2f', snapshot.hour or 0))
+        local evaluation = snapshot.evaluation
+        if evaluation then
+            row(T('Simulation'), T(evaluation.reason))
+            row(T('Tension'), string.format('%.0f / 100', evaluation.tension or 0))
+            row(T('ThreatProbability'), string.format('%.1f%%', evaluation.chance or 0))
+            row(T('NightPressure'), string.format('%.0f%%', evaluation.nightSprinters or 0))
+            row(T('LearnedPressure'), string.format('%.0f%%', (evaluation.pressure or 1) * 100))
+            row(T('OpportunityUsage'), evaluation.opportunities or 0)
+            if evaluation.threatBlock then row(T('ThreatBlock'), T(evaluation.threatBlock)) end
+            for _, kind in ipairs(Config.events) do row(T('Event_' .. kind) .. ' ' .. T('EffectiveWeight'), string.format('%.2f', ((evaluation.weights or {})[kind] or 0) / 100)) end
+        end
+        if snapshot.lastOutcome then row(T('LastOutcome'), T(snapshot.lastOutcome)) end
+        if simulation then
+            row(T('Simulation'), T(simulation.reason))
+            if simulation.event then row(T('SimulationEvent'), T('Event_' .. simulation.event)) end
+            if simulation.event == 'horde' and simulation.target then row(T('SimulationTarget'), simulation.target) end
+            row(T('SimulationTip'))
+        end
         row(T('NativeClock'))
         row(T('NativeHordes'))
         for kind in pairs(snapshot.active or {}) do row(T('Running'), T('Event_' .. kind)) end
@@ -60,6 +79,9 @@ local function diagnostic(self, r)
             local value = '[' .. clock(h.at) .. '] ' .. T(h.reason)
             if h.event then value = value .. ' - ' .. T('Event_' .. h.event) end
             if h.target then value = value .. ' - ' .. h.target end
+            if h.context then
+                value = value .. string.format(' | %s %.0f | %s %.1f%%', T('Tension'), h.context.tension or 0, T('ThreatProbability'), h.context.chance or 0)
+            end
             row(value)
             if h.detail then row('  ' .. (h.detail == 'NoSafeTarget' and T(h.detail) or h.detail)) end
         end
@@ -85,9 +107,12 @@ if not Panel._spdoSection then
         end
         local area = { x = r.x, y = r.y + 44, w = r.w, h = r.h - 44 }
         if self.spdoTab == 1 then
-            self:key({ x = area.x, y = area.y, w = 260, h = 36 }, T('DecideNow'), function()
+            self:key({ x = area.x, y = area.y, w = math.floor((area.w - 8) / 2), h = 36 }, T('DecideNow'), function()
                 request(self, 'ForceDecision')
             end, 'gold', 'CZStar', T('ForceDecisionTip'), 'spdoForceDecision')
+            self:key({ x = area.x + math.floor((area.w - 8) / 2) + 8, y = area.y, w = math.floor((area.w - 8) / 2), h = 36 }, T('SimulateDecision'), function()
+                request(self, 'SimulateDecision')
+            end, nil, nil, T('SimulationTip'), 'spdoSimulateDecision')
             diagnostic(self, { x = area.x, y = area.y + 44, w = area.w, h = area.h - 44 })
             return
         end
@@ -125,7 +150,7 @@ if not Panel._spdoSection then
         local defs = {}
         local protections = { HealthMin = true, EnduranceMin = true, FatigueMax = true, BlockBleeding = true, DamageGrace = true,
             JoinGrace = true, BlockSleeping = true, BlockVehicles = true, NeighborRadius = true, RecoveryMinutes = true,
-            KillThreshold = true, ExtractionProtection = true }
+            KillThreshold = true, ExtractionProtection = true, TensionDecay = true, TensionLimit = true, GroupRadius = true, GroupRest = true }
         for _, d in ipairs(Config.definitions) do
             local name = d.key:sub(6)
             local category = protections[name] and 3 or name:sub(1, 5) == 'Night' and 5
@@ -141,6 +166,7 @@ if Events.OnServerCommand then
     Events.OnServerCommand.Add(function(module, command, args)
         if module == 'SPDO' and command == 'Snapshot' and type(args) == 'table' then
             snapshot, receivedAt = args, getTimestampMs()
+            if args.simulation then simulation = args.simulation end
         end
     end)
 end

@@ -20,9 +20,23 @@ Threat chances default to 10/15/20/25/30% for Danger stages 1–5. A configurabl
 
 Extraction Mode is read through its authoritative raid data and existing hideout checks. Hideouts, deploy, boarding, insertion, rescue and other transitions are protected. The integration never routes commands or repairs Extraction Mode state.
 
+## Adaptive pacing
+
+Adaptive pacing is enabled by default when the director is enabled. It remembers each survivor's tension (0–100) across saves and reconnects. Observed damage and kills raise tension; low health, low endurance, fatigue and bleeding establish a minimum. Tension recovers by 3 points per played minute, and groups at 70 or above cannot receive director hordes. These limits are configurable under Protection.
+
+Survivors connected within 100 tiles share their highest tension, learned pressure and attack history. Each member receives 30 played minutes of protection after a director attack, preventing the director from bypassing rest by rotating targets. Separated groups keep independent tension and learned pressure. Missing positions conservatively connect survivors; existing unknown-state protections still apply. The connection radius and rest duration are configurable.
+
+After combat or a horde, threat probability starts at 60% of its configured baseline and gradually returns to full strength over 60 quiet played minutes. Tension and learned pressure further reduce the selected group's probability. An active Night Event also reduces threat probability proportionally to its sprinter percentage; Night Events still run independently.
+
+A director horde causing a death or at least 30 cumulative health points of observed damage reduces its group's learned pressure by 25%, down to a floor of 50%. Manageable outcomes restore 5 percentage points toward the configured baseline. Disconnections, missing observations, restarts, replacement hordes and observed overlapping bonus or Night Events make the outcome uncertain, with no learning adjustment. This evaluates observed impact rather than claiming to identify the source of each injury.
+
+Contextual opportunity weights favor XP for worlds whose living survivors average RPG level 10 or below (weight ×1.5). Recent kills favor money, boxes and materials (weight ×1.25). Disabled, unavailable and zero-weight events remain excluded. Bonuses retain their configured values and duration. By default, a rolling budget permits four director bonuses per 240 played minutes; when the budget is exhausted, the director can wait or select an eligible threat. The budget and contextual weights can be disabled in General.
+
+Diagnostics show effective threat probability, tension, Night Event pressure, learned pressure, bonus usage and opportunity weights. **Simulate decision** performs a hypothetical draw using the latest observations, bypassing only the scheduled wait. It cannot start events, change the schedule, write decision history or consume the randomness used by actual decisions. Its result is an example, not a prediction of the next real draw. Actual decision history also retains the evaluated context.
+
 ## Events
 
-The director reuses native XP, Mystery Box Hunt, money, Evil Blood, Evil Souls, Evil Marrow, Evil Bile and horde implementations. It never creates its own rewards or spawner. Bonuses apply globally; hordes target one eligible survivor. Default bonuses last 10–15 real minutes: XP/money x1.5, boxes 2%, materials 10%. Opportunity weights are XP 25, money 20, boxes 10, blood 15, souls 10, marrow 10 and bile 10. It avoids repeating the last opportunity when alternatives exist; weight zero excludes an event.
+The director reuses native XP, Mystery Box Hunt, money, Evil Blood, Evil Souls, Evil Marrow, Evil Bile and horde implementations. It never creates its own rewards or spawner. Bonuses apply globally; hordes target one eligible survivor. Default bonuses last 10–15 real minutes: XP/money x1.5, boxes 2%, materials 10%. Base opportunity weights are XP 25, money 20, boxes 10, blood 15, souls 10, marrow 10 and bile 10; adaptive context can adjust eligible weights. It avoids repeating the last opportunity when alternatives exist; weight zero excludes an event.
 
 The director waits for existing events before starting its own, never overwrites or ends admin/ticket events, and respects native horde size, duration, cooldown and the HordesEnabled switch. **Native kill-triggered hordes remain independent and may still occur during director protection/rest periods.** Events started externally after a director event may overlap it. Switching the director off lets already running events end normally.
 

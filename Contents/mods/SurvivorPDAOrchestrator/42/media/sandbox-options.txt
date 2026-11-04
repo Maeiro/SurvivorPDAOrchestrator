@@ -159,6 +159,92 @@ option ProjectRPGExpanded.SPDO_ExtractionProtection
     default = true,
 }
 
+option ProjectRPGExpanded.SPDO_AdaptiveEnabled
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_AdaptiveEnabled,
+    default = true,
+}
+
+option ProjectRPGExpanded.SPDO_TensionDecay
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_TensionDecay,
+    default = 3,
+    min = 1,
+    max = 20,
+}
+
+option ProjectRPGExpanded.SPDO_TensionLimit
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_TensionLimit,
+    default = 70,
+    min = 1,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_GroupRadius
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_GroupRadius,
+    default = 100,
+    min = 0,
+    max = 500,
+}
+
+option ProjectRPGExpanded.SPDO_GroupRest
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_GroupRest,
+    default = 30,
+    min = 0,
+    max = 240,
+}
+
+option ProjectRPGExpanded.SPDO_CalmMinutes
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_CalmMinutes,
+    default = 60,
+    min = 1,
+    max = 240,
+}
+
+option ProjectRPGExpanded.SPDO_OpportunityLimit
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_OpportunityLimit,
+    default = 4,
+    min = 0,
+    max = 100,
+}
+
+option ProjectRPGExpanded.SPDO_OpportunityWindow
+{
+    type = integer,
+    page = SPDO_Orchestrator,
+    translation = SPDO_OpportunityWindow,
+    default = 240,
+    min = 1,
+    max = 1440,
+}
+
+option ProjectRPGExpanded.SPDO_ContextOpportunities
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_ContextOpportunities,
+    default = true,
+}
+
 option ProjectRPGExpanded.SPDO_HordeEnabled
 {
     type = boolean,

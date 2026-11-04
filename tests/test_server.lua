@@ -21,6 +21,9 @@ Events = setmetatable({}, { __index = function(t, k)
 end })
 package.loaded.PRPGE_Tick = { Add = function(fn) tick = fn end }
 package.loaded.PRPGE_SettingsServer = { CanEdit = function(p) return p.admin == true end }
+package.loaded['SPDO/Night'] = { Status = function() return {} end }
+package.loaded['SPDO/NightSprinters'] = {}
+stored.nightSettingsMigrated = true
 require 'SPDO_Server'
 Events.OnInitGlobalModData.handlers[1]()
 tick()
@@ -60,3 +63,17 @@ equal(sent[4].args.requestResult, 'ForceCooldown')
 local count = stored.elapsed
 isClient = function() return true end
 wall, hours = wall + 1000, 105; tick(); equal(stored.elapsed, count, 'clients cannot run director')
+
+isClient = function() return false end
+wall = wall + 6000
+local before, deadline, history = #g.started, stored.nextAt, #stored.history
+request('SPDO', 'SimulateDecision', normal)
+equal(#g.started, before, 'unauthorized simulation never starts an event')
+local sentBefore = #sent
+request('SPDO', 'SimulateDecision', normal)
+equal(#sent, sentBefore, 'non-admin simulation denied')
+request('SPDO', 'SimulateDecision', admin)
+check(sent[#sent].args.simulation ~= nil, 'authorized simulation returns an explanation')
+equal(#g.started, before, 'simulation cannot start an event')
+equal(stored.nextAt, deadline, 'simulation preserves schedule')
+equal(#stored.history, history, 'simulation preserves decision history')

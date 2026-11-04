@@ -14,6 +14,15 @@ runtime.execute("package.path = ... .. '/shared/?.lua;' .. package.path", LUA.as
 config = runtime.eval("require('SPDO/Config')")
 
 labels = {
+    'AdaptiveEnabled': ('Adaptive pacing and tension memory', 'Ritmo adaptativo e memória de tensão'),
+    'TensionDecay': ('Tension recovery per played minute', 'Recuperação de tensão por minuto jogado'),
+    'TensionLimit': ('Protect groups at tension (0–100)', 'Proteger grupos com tensão (0–100)'),
+    'GroupRadius': ('Group connection radius (tiles; 0 = individual)', 'Raio de conexão do grupo (tiles; 0 = individual)'),
+    'GroupRest': ('Group rest after director attack (played minutes)', 'Descanso do grupo após ataque do diretor (minutos jogados)'),
+    'CalmMinutes': ('Quiet time to reach full threat chance (played minutes)', 'Tempo tranquilo até a chance de ameaça plena (minutos jogados)'),
+    'OpportunityLimit': ('Maximum bonuses per window (0 = unlimited)', 'Máximo de bônus por período (0 = ilimitado)'),
+    'OpportunityWindow': ('Bonus budget window (played minutes)', 'Período do limite de bônus (minutos jogados)'),
+    'ContextOpportunities': ('Adjust opportunity weights to group progression and combat', 'Ajustar pesos das oportunidades à progressão e combate do grupo'),
     'Enabled': ('Enable Orchestrator', 'Ativar Orquestrador'),
     'Preset': ('Event frequency preset', 'Preset de frequência dos eventos'),
     'IntervalMin': ('Custom: minimum interval (played minutes)', 'Personalizado: intervalo mínimo (minutos jogados)'),
@@ -41,6 +50,25 @@ for level in range(1, 5):
     labels[f'NightLevel{level}LootBonus'] = (f'Level {level} loot chance bonus (%)', f'Bônus de chance de loot do nível {level} (%)')
     labels[f'NightLevel{level}SprinterPercentage'] = (f'Level {level} sprinter chance (%)', f'Chance de sprinter do nível {level} (%)')
 strings = {
+    'HighTension': ('Group still recovering from recent pressure', 'Grupo ainda se recuperando da pressão recente'),
+    'GroupRest': ('Group resting after a director attack', 'Grupo descansando após ataque do diretor'),
+    'OpportunityBudget': ('Bonus budget reached; waiting', 'Limite de bônus atingido; aguardando'),
+    'OutcomeSevere': ('Severe impact: future pressure reduced', 'Impacto grave: pressão futura reduzida'),
+    'OutcomeManageable': ('Manageable impact: pressure returns gradually to baseline', 'Impacto controlado: pressão retorna gradualmente ao padrão'),
+    'OutcomeUncertain': ('Outcome uncertain: missing data or overlapping events; no adjustment', 'Resultado incerto: dados ausentes ou eventos sobrepostos; sem ajuste'),
+    'SimulateDecision': ('Simulate decision', 'Simular decisão'),
+    'Simulation': ('Latest simulation', 'Última simulação'),
+    'SimulationEvent': ('Possible event', 'Evento possível'),
+    'SimulationTarget': ('Possible target', 'Alvo possível'),
+    'SimulationTip': ('Read-only hypothetical draw from the latest observations. Skips the scheduled wait; never starts events or changes the real draw.', 'Sorteio hipotético a partir das últimas observações. Ignora a espera agendada; nunca inicia eventos nem altera o sorteio real.'),
+    'Tension': ('Highest group tension', 'Maior tensão entre os grupos'),
+    'ThreatProbability': ('Effective threat chance for selected safe target', 'Chance efetiva de ameaça para o alvo seguro selecionado'),
+    'NightPressure': ('Night Event sprinter pressure', 'Pressão de sprinters do evento noturno'),
+    'LearnedPressure': ('Pressure after observed horde outcomes', 'Pressão após resultados observados de hordas'),
+    'OpportunityUsage': ('Bonuses in current budget window', 'Bônus no período atual do limite'),
+    'ThreatBlock': ('Threat blocked by', 'Ameaça bloqueada por'),
+    'EffectiveWeight': ('effective weight', 'peso efetivo'),
+    'LastOutcome': ('Last director horde outcome', 'Resultado da última horda do diretor'),
     'Title': ('ORCHESTRATOR', 'ORQUESTRADOR'), 'Rare': ('Rare (60–120 min)', 'Raro (60–120 min)'),
     'Moderate': ('Moderate (30–60 min)', 'Moderado (30–60 min)'),
     'Frequent': ('Frequent (15–30 min)', 'Frequente (15–30 min)'), 'Custom': ('Custom', 'Personalizado'),
@@ -175,7 +203,7 @@ for _, d in config.definitions.items():
 (MEDIA / 'sandbox-options.txt').write_text('\n'.join(lines), encoding='utf-8')
 metadata = '\n'.join(['name=Survivor PDA Orchestrator', 'id=SurvivorPDAOrchestrator', 'author=Maeiro',
     'description=An adaptive event director for Survivor PDA (ProjectRPGExpanded), including configurable Night Events.',
-    'modversion=0.2.0', 'versionMin=42.21.0', 'require=ProjectRPGExpanded,ZombieBuddy',
+    'modversion=0.3.0', 'versionMin=42.21.0', 'require=ProjectRPGExpanded,ZombieBuddy',
     'loadModAfter=ProjectRPGExpanded,ExtractionMode,ZombieBuddy', ''])
 for file in [MOD / 'mod.info', MOD / '42/mod.info']:
     java_metadata = metadata
