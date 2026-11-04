@@ -16,5 +16,5 @@
 
 Workshop ID: 3833288237
 Mod ID: SurvivorPDAOrchestrator"
-    "changenote" "Adds adaptive group tension, cautious horde outcome learning, Night Event threat pressure, contextual opportunity weights, a configurable bonus limit, and read-only decision simulation. Includes English and Brazilian Portuguese settings and diagnostics."
+    "changenote" "0.3.1: Avoids a startup error when the climate season is not ready yet; night state refreshes after climate initialization."
 }

@@ -89,9 +89,14 @@ local function refresh()
     local gameTime = getGameTime and getGameTime()
     if not gameTime then return end
 
+    local ok, isNight, nightCycle = pcall(function()
+        return gameTime:isNight(), getNightCycle(gameTime)
+    end)
+    if not ok then return end
+
     Night.enabled = Config.Get('NightEventsEnabled') == true
-    Night.isNight = gameTime:isNight()
-    Night.nightCycle = getNightCycle(gameTime)
+    Night.isNight = isNight
+    Night.nightCycle = nightCycle
     Night.levels = getLevels()
     Night.level = 1
     Night.occurs = false
