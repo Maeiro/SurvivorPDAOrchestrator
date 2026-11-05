@@ -16,5 +16,5 @@
 
 Workshop ID: 3833288237
 Mod ID: SurvivorPDAOrchestrator"
-    "changenote" "0.3.4: Fixes Night Event rerolls at midnight and restores the active event icon in multiplayer HUDs."
+    "changenote" "0.3.5: Fixes Night Event state synchronization and restores its icon for multiplayer clients joining during an active event."
 }

@@ -14,6 +14,7 @@ local gameTime = {
     getMonth = function() return 0 end,
     daysInMonth = function() return 30 end,
     getHour = function() return 22 end,
+    getWorldAgeHours = function() return 22 end,
     getDawn = function() return 6 end,
 }
 getGameTime = function() return gameTime end

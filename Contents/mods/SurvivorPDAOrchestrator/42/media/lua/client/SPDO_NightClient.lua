@@ -1,6 +1,7 @@
 local Night = require 'SPDO/Night'
 local Text = require 'SPDO/Locale'
 
+local nightDataKey = 'SurvivorPDAOrchestratorNight'
 local eventIconPath = 'media/ui/SurvivorPDAOrchestrator_NightEvent.png'
 local nightMessages = {
     [1] = { key = 'NightAlert1', color = { 137, 232, 148 } },
@@ -12,6 +13,17 @@ local dawnMessage = 'DawnAlert'
 local lastNightCycle
 local nightWasActive = false
 local nightIntroAt
+
+local function requestNightState()
+    if isClient and isClient() and ModData and ModData.request then ModData.request(nightDataKey) end
+end
+
+local function receiveNightState(key, data)
+    if key ~= nightDataKey or type(data) ~= 'table' or not (isClient and isClient()) then return end
+    if not ModData or not ModData.add then return end
+    ModData.add(key, data)
+    Night.refresh()
+end
 
 local function showNotice(player, text, color)
     if not player then return end
@@ -109,4 +121,7 @@ local function update()
 end
 
 installEventTag()
+if Events.OnReceiveGlobalModData then Events.OnReceiveGlobalModData.Add(receiveNightState) end
+if Events.OnGameStart then Events.OnGameStart.Add(requestNightState) end
 if Events.OnTick then Events.OnTick.Add(update) end
+if getSpecificPlayer and getSpecificPlayer(0) then requestNightState() end
