@@ -16,13 +16,7 @@ local nightDataKey = 'SurvivorPDAOrchestratorNight'
 local legacyNightDataKey = 'ViewpointExtractionSupportNight'
 
 local function getNightCycle(gameTime)
-    local year = gameTime:getYear()
-    local day = year * 400 + gameTime:getDay()
-    for month = 0, gameTime:getMonth() - 1 do
-        day = day + gameTime:daysInMonth(year, month)
-    end
-    if gameTime:getHour() < gameTime:getDawn() then day = day - 1 end
-    return day
+    return math.floor((gameTime:getWorldAgeHours() - gameTime:getDawn()) / 24)
 end
 
 local function clamp(value, minimum, maximum, fallback)
@@ -61,7 +55,7 @@ end
 local function getNightLevel(cycle, levels)
     if isClient and isClient() then
         local data = ModData and ModData.get and ModData.get(nightDataKey)
-        if data and tonumber(data.nightCycle) == cycle then
+        if data and (tonumber(data.nightCycle) == cycle or data.nightOpen) then
             return clamp(data.level, 1, 4, 1), data.active == true, true
         end
         return 1, false, false
@@ -70,20 +64,36 @@ local function getNightLevel(cycle, levels)
 
     local data = ModData.getOrCreate(nightDataKey)
     if tonumber(data.nightCycle) ~= cycle then
-        local legacy = ModData.get and ModData.get(legacyNightDataKey)
-        local migratedLevel = legacy and tonumber(legacy.nightCycle) == cycle and tonumber(legacy.level)
-        data.nightCycle = cycle
-        data.sprintersConverted = 0
-        if migratedLevel then
-            data.active = legacy.active ~= false
-            data.level = clamp(migratedLevel, 1, 4, 1)
-        else
-            data.active = ZombRand(100) < clamp(Config.Get('NightEventsChance'), 0, 100, 50)
-            data.level = data.active and chooseLevel(levels) or 1
+        if not data.nightOpen then
+            local legacy = ModData.get and ModData.get(legacyNightDataKey)
+            local migratedLevel = legacy and tonumber(legacy.nightCycle) == cycle and tonumber(legacy.level)
+            data.sprintersConverted = 0
+            if migratedLevel then
+                data.active = legacy.active ~= false
+                data.level = clamp(migratedLevel, 1, 4, 1)
+            else
+                data.active = ZombRand(100) < clamp(Config.Get('NightEventsChance'), 0, 100, 50)
+                data.level = data.active and chooseLevel(levels) or 1
+            end
+            data.nightCycle = cycle
+            data.nightOpen = true
+            transmit()
         end
+    elseif not data.nightOpen then
+        data.nightOpen = true
         transmit()
     end
     return clamp(data.level, 1, 4, 1), data.active == true, true
+end
+
+local function closeNight()
+    if not ModData or not ModData.getOrCreate then return end
+    if isClient and isClient() and isMultiplayer and isMultiplayer() then return end
+    local data = ModData.getOrCreate(nightDataKey)
+    if data.nightOpen then
+        data.nightOpen = false
+        transmit()
+    end
 end
 
 local function refresh()
@@ -107,6 +117,7 @@ local function refresh()
     Night.enabled = Config.Get('NightEventsEnabled') == true
     Night.isNight = isNight
     Night.nightCycle = nightCycle
+    if not Night.isNight and gameTime:getHour() >= gameTime:getDawn() then closeNight() end
     Night.levels = getLevels()
     Night.level = 1
     Night.occurs = false
@@ -135,6 +146,7 @@ function Night.StartManual()
 
     local data = ModData.getOrCreate(nightDataKey)
     data.nightCycle = Night.nightCycle
+    data.nightOpen = true
     data.active = true
     data.level = chooseLevel(Night.levels)
     data.sprintersConverted = 0

@@ -49,44 +49,56 @@ end
 
 local function installEventTag()
     local ok, Boost = pcall(require, 'PRPGE_XPBoostClient')
-    if not ok or type(Boost.Rows) ~= 'function' or Boost._spdoNightEvent then return end
-    local rows = Boost.Rows
-    Boost.Rows = function()
-        local result = {}
-        for _, row in ipairs(rows()) do result[#result + 1] = row end
-        if Night.active then
-            local levels = Night.levels or {}
-            local level = tonumber(Night.level) or 1
-            local selected = levels[level] or {}
-            local loot = tonumber(selected.lootBonusPercent) or 0
-            local sprinters = tonumber(selected.sprinterPercentage) or 0
-            local colors = {
-                { 0.54, 0.91, 0.58 }, { 1, 0.82, 0.25 }, { 1, 0.55, 0.25 }, { 1, 0.31, 0.31 },
-            }
-            result[#result + 1] = {
-                'Item_SPDONightEvent', '+' .. loot .. '%', sprinters .. '% sprinters', colors[level] or colors[1],
-                Text.Text('NightEventStarted'),
-                string.format(Text.Text('NightEventDescription'), loot .. '%', sprinters .. '%'), nightIntroAt,
-                Text.Text('NightEventTag'),
-            }
+    if not ok or type(Boost) ~= 'table' or type(Boost.Rows) ~= 'function' then return end
+    if Boost.Rows ~= Boost._spdoNightRows then
+        local rows = Boost.Rows
+        local wrappedRows = function()
+            local result = rows()
+            if type(result) ~= 'table' then result = {} end
+            for index = #result, 1, -1 do
+                if type(result[index]) == 'table' and result[index][1] == 'Item_SPDONightEvent' then
+                    table.remove(result, index)
+                end
+            end
+            if Night.active then
+                local levels = Night.levels or {}
+                local level = tonumber(Night.level) or 1
+                local selected = levels[level] or {}
+                local loot = tonumber(selected.lootBonusPercent) or 0
+                local sprinters = tonumber(selected.sprinterPercentage) or 0
+                local colors = {
+                    { 0.54, 0.91, 0.58 }, { 1, 0.82, 0.25 }, { 1, 0.55, 0.25 }, { 1, 0.31, 0.31 },
+                }
+                result[#result + 1] = {
+                    'Item_SPDONightEvent', '+' .. loot .. '%', sprinters .. '% sprinters', colors[level] or colors[1],
+                    Text.Text('NightEventStarted'),
+                    string.format(Text.Text('NightEventDescription'), loot .. '%', sprinters .. '%'), nightIntroAt,
+                    Text.Text('NightEventTag'),
+                }
+            end
+            return result
         end
-        return result
+        Boost.Rows = wrappedRows
+        Boost._spdoNightRows = wrappedRows
     end
-    if type(Boost.ItemTex) == 'function' then
+    if type(Boost.ItemTex) == 'function' and Boost.ItemTex ~= Boost._spdoNightItemTex then
         local itemTex = Boost.ItemTex
-        Boost.ItemTex = function(name)
+        local wrappedItemTex = function(name)
             if name == 'Item_SPDONightEvent' and getTexture then
                 local texture = getTexture(eventIconPath)
                 if texture then return texture end
             end
             return itemTex(name)
         end
+        Boost.ItemTex = wrappedItemTex
+        Boost._spdoNightItemTex = wrappedItemTex
     end
-    if type(Boost.DropsActive) == 'function' then
+    if type(Boost.DropsActive) == 'function' and Boost.DropsActive ~= Boost._spdoNightDropsActive then
         local dropsActive = Boost.DropsActive
-        Boost.DropsActive = function() return Night.active or dropsActive() end
+        local wrappedDropsActive = function() return Night.active or dropsActive() end
+        Boost.DropsActive = wrappedDropsActive
+        Boost._spdoNightDropsActive = wrappedDropsActive
     end
-    Boost._spdoNightEvent = true
 end
 
 local function update()

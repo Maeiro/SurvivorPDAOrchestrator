@@ -16,5 +16,5 @@
 
 Workshop ID: 3833288237
 Mod ID: SurvivorPDAOrchestrator"
-    "changenote" "0.3.2: Night Event sprinters now take priority over World Danger speed updates. The PDA Admin Night Event status reports conversions. Avoids the climate season startup error."
+    "changenote" "0.3.4: Fixes Night Event rerolls at midnight and restores the active event icon in multiplayer HUDs."
 }
