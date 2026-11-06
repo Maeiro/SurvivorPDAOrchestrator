@@ -16,5 +16,5 @@
 
 Workshop ID: 3833288237
 Mod ID: SurvivorPDAOrchestrator"
-    "changenote" "0.3.5: Fixes Night Event state synchronization and restores its icon for multiplayer clients joining during an active event."
+    "changenote" "0.3.6: Fixes duplicate Night Event notifications at 19:00 and pauses the director and its event timers while single-player is paused."
 }

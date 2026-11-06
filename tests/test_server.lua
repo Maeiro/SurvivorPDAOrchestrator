@@ -77,3 +77,76 @@ check(sent[#sent].args.simulation ~= nil, 'authorized simulation returns an expl
 equal(#g.started, before, 'simulation cannot start an event')
 equal(stored.nextAt, deadline, 'simulation preserves schedule')
 equal(#stored.history, history, 'simulation preserves decision history')
+
+isServer = function() return false end
+isMultiplayer = function() return false end
+getTimestampMs = function() return wall end
+local paused = false
+isGamePaused = function() return paused end
+local updatePause = Events.OnTickEvenPaused.handlers[1]
+Events.OnGameStart.handlers[1]()
+tick()
+local played = stored.elapsed
+wall, hours = wall + 500, hours + 1
+paused = true
+updatePause()
+wall, hours = wall + 2000, hours + 1
+updatePause()
+tick()
+equal(stored.elapsed, played, 'SP director cannot step while paused')
+paused = false
+updatePause()
+tick()
+equal(stored.elapsed, played, 'resuming does not count a short pause as played time')
+wall, hours = wall + 500, hours + 1
+tick()
+equal(stored.elapsed, played + 1, 'the director resumes from its remaining interval')
+
+local native = {}
+ModData.get = function(key) return native[key] end
+PRPGE_XPBoostClient = {}
+PRPGE_DropEventsClient = { drops = {} }
+local events = {
+    { kind = 'xp', key = 'PRPGE_XPBoost', hud = PRPGE_XPBoostClient, field = 'state' },
+    { kind = 'box', key = 'PRPGE_BoxHunt', hud = PRPGE_XPBoostClient, field = 'hunt' },
+    { kind = 'marrow', key = 'PRPGE_DropEvents', hud = PRPGE_DropEventsClient.drops, field = 'marrow' },
+}
+for _, item in ipairs(events) do
+    local event = { id = 'director', startedAt = wall, endsAt = wall + 1000 }
+    local hud = { id = event.id, endsAt = event.endsAt }
+    item.hud[item.field] = hud
+    native[item.key] = item.kind == 'marrow' and { marrow = event } or event
+    stored.own = { kind = item.kind, id = event.id }
+    paused = true
+    updatePause()
+    wall = wall + 3000
+    updatePause()
+    equal(event.endsAt - wall, 1000, item.kind .. ' bonus survives a pause longer than the remaining duration')
+    equal(hud.endsAt - wall, 1000, item.kind .. ' HUD freezes with the bonus')
+    paused = false
+    wall = wall + 2000
+    updatePause()
+    equal(event.endsAt - wall, 1000, item.kind .. ' deadline is corrected before the first unpaused tick')
+    equal(hud.endsAt - wall, 1000, item.kind .. ' HUD resumes with the same time left')
+    wall = wall + 500
+    updatePause()
+    equal(event.endsAt - wall, 500, item.kind .. ' uses real seconds during play')
+end
+
+local replacement = { id = 'manual', startedAt = wall, endsAt = wall + 1000 }
+native.PRPGE_DropEvents.marrow = replacement
+paused = true
+updatePause()
+wall = wall + 500
+updatePause()
+equal(replacement.endsAt - wall, 500, 'a manually replaced event keeps its native deadline')
+paused = false
+updatePause()
+stored.own = { kind = 'marrow', id = replacement.id }
+isServer = function() return true end
+isMultiplayer = function() return true end
+paused = true
+updatePause()
+wall = wall + 100
+updatePause()
+equal(replacement.endsAt - wall, 400, 'multiplayer ignores the single-player pause hook')

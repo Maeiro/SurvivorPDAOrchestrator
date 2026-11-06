@@ -46,11 +46,12 @@ fire('OnReceiveGlobalModData', 'AnotherMod', { active = true })
 fire('OnReceiveGlobalModData', key, false)
 equal(tables[key], nil, 'unrelated and unavailable payloads are ignored')
 
-local state = { nightCycle = 0, nightOpen = true, active = true, level = 3 }
+local state = { nightCycle = -1, nightOpen = true, active = true, level = 3 }
 fire('OnReceiveGlobalModData', key, state)
 equal(tables[key], state, 'received payload is stored for shared night consumers')
 equal(night.levelReady, true, 'client accepts the authoritative level')
 equal(night.active, true, 'late join sees the already running event')
+equal(night.nightCycle, -1, 'client uses the open event ID from the server')
 equal(night.lootBonusPercent, 150, 'HUD receives the configured level bonus')
 equal(night.sprinterPercentage, 33, 'HUD receives the configured sprinter chance')
 local rows = boost.Rows()
@@ -61,13 +62,17 @@ equal(rows[1][2], '+150%', 'native event list shows the active loot bonus')
 hour, age = 0, 24
 fire('EveryOneMinute')
 equal(night.level, 3, 'midnight preserves the received level')
+equal(night.nightCycle, -1, 'client keeps the server event ID after refreshing the clock')
 equal(#boost.Rows(), 1, 'midnight preserves the event tag')
 
-fire('OnReceiveGlobalModData', key, { nightCycle = 0, nightOpen = true, active = false, level = 3 })
+fire('OnReceiveGlobalModData', key, { nightCycle = -1, nightOpen = true, active = false, level = 3 })
 equal(night.active, false, 'remote manual end immediately clears client state')
 equal(#boost.Rows(), 0, 'remote manual end removes the tag')
 
-fire('OnReceiveGlobalModData', key, { nightCycle = 0, nightOpen = true, active = true, level = 2 })
+fire('OnReceiveGlobalModData', key, { nightCycle = 0, nightOpen = false, active = true, level = 3 })
+equal(night.active, false, 'a closed server night stays closed when the client clock still reports night')
+
+fire('OnReceiveGlobalModData', key, { nightCycle = -1, nightOpen = true, active = true, level = 2 })
 equal(night.level, 2, 'remote manual start replaces the inactive state')
 equal(#boost.Rows(), 1, 'remote manual start restores the tag')
 hour, age = 7, 31

@@ -14,9 +14,11 @@ local Night = {
 
 local nightDataKey = 'SurvivorPDAOrchestratorNight'
 local legacyNightDataKey = 'ViewpointExtractionSupportNight'
+local cycleBoundaryHour = 12
 
 local function getNightCycle(gameTime)
-    return math.floor((gameTime:getWorldAgeHours() - gameTime:getDawn()) / 24)
+    -- World age counts from 07:00. Change cycles at noon, between nights.
+    return math.floor((gameTime:getWorldAgeHours() + 7 - cycleBoundaryHour) / 24)
 end
 
 local function clamp(value, minimum, maximum, fallback)
@@ -55,12 +57,12 @@ end
 local function getNightLevel(cycle, levels)
     if isClient and isClient() then
         local data = ModData and ModData.get and ModData.get(nightDataKey)
-        if data and (tonumber(data.nightCycle) == cycle or data.nightOpen) then
-            return clamp(data.level, 1, 4, 1), data.active == true, true
+        if data and (data.nightOpen == true or (data.nightOpen == nil and tonumber(data.nightCycle) == cycle)) then
+            return clamp(data.level, 1, 4, 1), data.active == true, true, tonumber(data.nightCycle) or cycle
         end
-        return 1, false, false
+        return 1, false, false, cycle
     end
-    if not ModData or not ModData.getOrCreate then return 1, false, false end
+    if not ModData or not ModData.getOrCreate then return 1, false, false, cycle end
 
     local data = ModData.getOrCreate(nightDataKey)
     if tonumber(data.nightCycle) ~= cycle then
@@ -83,7 +85,7 @@ local function getNightLevel(cycle, levels)
         data.nightOpen = true
         transmit()
     end
-    return clamp(data.level, 1, 4, 1), data.active == true, true
+    return clamp(data.level, 1, 4, 1), data.active == true, true, tonumber(data.nightCycle) or cycle
 end
 
 local function closeNight()
@@ -117,13 +119,13 @@ local function refresh()
     Night.enabled = Config.Get('NightEventsEnabled') == true
     Night.isNight = isNight
     Night.nightCycle = nightCycle
-    if not Night.isNight and gameTime:getHour() >= gameTime:getDawn() then closeNight() end
+    if not Night.isNight and gameTime:getHour() >= cycleBoundaryHour then closeNight() end
     Night.levels = getLevels()
     Night.level = 1
     Night.occurs = false
     Night.levelReady = false
     if Night.enabled and Night.isNight then
-        Night.level, Night.occurs, Night.levelReady = getNightLevel(Night.nightCycle, Night.levels)
+        Night.level, Night.occurs, Night.levelReady, Night.nightCycle = getNightLevel(nightCycle, Night.levels)
     end
 
     Night.active = Night.enabled and Night.isNight and Night.levelReady and Night.occurs

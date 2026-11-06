@@ -7,6 +7,7 @@ local Director = require 'SPDO/Director'
 local SettingsServer = require 'PRPGE_SettingsServer'
 local Settings = require 'PRPGE_Settings'
 local Night = require 'SPDO/Night'
+local Pause = require 'SPDO/Pause'
 require 'SPDO/NightSprinters'
 local instance, lastWall, lastHours, failures = nil, nil, nil, 0
 local requests = setmetatable({}, { __mode = 'k' })
@@ -58,11 +59,14 @@ local function initialize()
     migrateNightSettings(data)
     if not instance or instance.data ~= data then instance = Director.New(Game, Config, data) end
     lastWall, lastHours = nil, nil
+    Pause.Reset()
 end
 
 local function tick()
     if not Game.Authority() or not instance then return end
-    local wall, hours = Game.Milliseconds(), Game.Hours()
+    local wall = Pause.PlayedClock(Game.Milliseconds())
+    if not wall then return end
+    local hours = Game.Hours()
     if not lastWall or wall < lastWall then lastWall, lastHours = wall, hours; return end
     local delta = (wall - lastWall) / 1000
     if delta < 1 then return end
@@ -152,6 +156,11 @@ end
 if Events.OnInitGlobalModData then Events.OnInitGlobalModData.Add(initialize) end
 if Events.OnGameStart then Events.OnGameStart.Add(initialize) end
 if Events.OnServerStarted then Events.OnServerStarted.Add(initialize) end
+if Events.OnTickEvenPaused then
+    Events.OnTickEvenPaused.Add(function()
+        if instance then Pause.Update(instance.data.own) end
+    end)
+end
 if Events.OnClientCommand then
     Events.OnClientCommand.Add(function(module, command, p)
         if module == 'SPDO' then request(p, command) end
