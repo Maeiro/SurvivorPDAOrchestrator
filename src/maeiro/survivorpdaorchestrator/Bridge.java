@@ -18,7 +18,27 @@ public final class Bridge {
     }
 
     public static float scaleNightLootChance(float chance, Object container) {
-        return container == null ? chance : chance * nightLootMultiplier;
+        return NightLoot.scale(chance, container, nightLootMultiplier);
+    }
+
+    public static void setNightLootMode(int mode) {
+        NightLoot.setMode(mode);
+    }
+
+    public static boolean inspectNightLoot(Object container, Object player, int percent) {
+        return NightLoot.inspect(container, player, percent);
+    }
+
+    public static Object beginNightLootRefresh(Object container) {
+        return NightLoot.beginRefresh(container);
+    }
+
+    public static void finishNightLootRefresh(Object context, boolean success) {
+        NightLoot.finishRefresh(context, success);
+    }
+
+    public static String nightLootDiagnostics() {
+        return NightLoot.diagnostics();
     }
 
 }

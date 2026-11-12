@@ -44,12 +44,16 @@ labels = {
     'NightThreatMultiplier': ('Night threat chance multiplier (20:00–06:00)', 'Multiplicador da chance de ameaça noturna (20h–6h)'),
     'NightEventsEnabled': ('Enable Night Events', 'Ativar eventos noturnos'),
     'NightEventsChance': ('Night Event chance per night (%)', 'Chance de Night Event por noite (%)'),
+    'NightLootMode': ('Night loot bonus mode', 'Modo do bônus de loot noturno'),
 }
 for level in range(1, 5):
     labels[f'NightLevel{level}Weight'] = (f'Level {level} chance weight (%)', f'Peso da chance do nível {level} (%)')
     labels[f'NightLevel{level}LootBonus'] = (f'Level {level} loot chance bonus (%)', f'Bônus de chance de loot do nível {level} (%)')
     labels[f'NightLevel{level}SprinterPercentage'] = (f'Level {level} sprinter chance (%)', f'Chance de sprinter do nível {level} (%)')
 strings = {
+    'LootOnInspection': ('On inspection — additional rolls', 'Ao inspecionar — sorteios adicionais'),
+    'LootOnGeneration': ('During generation — legacy behavior', 'Durante a geração — comportamento anterior'),
+    'NightLootDiagnostics': ('Loot: generated / inspected / bonuses / skipped / errors', 'Loot: gerados / inspecionados / bônus / ignorados / erros'),
     'HighTension': ('Group still recovering from recent pressure', 'Grupo ainda se recuperando da pressão recente'),
     'GroupRest': ('Group resting after a director attack', 'Grupo descansando após ataque do diretor'),
     'OpportunityBudget': ('Bonus budget reached; waiting', 'Limite de bônus atingido; aguardando'),
@@ -76,7 +80,7 @@ strings = {
     'Events': ('Events', 'Eventos'), 'State': ('Director state', 'Estado do diretor'),
     'NightEvents': ('Night Events', 'Eventos noturnos'),
     'NightEventStarted': ('NIGHT EVENT!', 'EVENTO NOTURNO!'),
-    'NightEventDescription': ('Container loot +%s; sprinters %s until dawn.', 'Loot em containers +%s; sprinters %s até amanhecer.'),
+    'NightEventDescription': ('Container loot bonus +%s; sprinters %s until dawn.', 'Bônus de loot em containers +%s; sprinters %s até amanhecer.'),
     'NightEventTag': ('NIGHT LUCK', 'SORTE NOTURNA'),
     'StartNightEvent': ('Start Night Event', 'Iniciar evento noturno'),
     'EndNightEvent': ('End Night Event', 'Encerrar evento noturno'),
@@ -164,10 +168,11 @@ tips = {
     'NeighborRadius': ('A vulnerable neighbor also protects the selected target. Zero disables the proximity check.', 'Um vizinho vulnerável também protege o alvo selecionado. Zero desativa a verificação de proximidade.'),
     'NightEventsEnabled': ('Off by default. Each night, the configured weights select one level that increases container loot chances and the chance for zombies to become sprinters.', 'Desativado por padrão. A cada noite, os pesos configurados sorteiam um nível que aumenta a chance de loot nos containers e a chance de zumbis virarem sprinters.'),
     'NightEventsChance': ('When Night Events are enabled, this is the chance that the event occurs on each night. The level is rolled only when the event occurs.', 'Com os eventos noturnos ativados, esta é a chance de o evento ocorrer a cada noite. O nível só é sorteado quando o evento acontece.'),
+    'NightLootMode': ('Inspection: additional rolls on the first inspection of each loot cycle. Passing nearby does not consume the bonus. +200% gives two extra rolls; +50% gives one at half chances. A daytime inspection consumes eligibility. Real loot respawn or Extraction Mode refresh renews it. Existing containers need their next respawn. Legacy: multiply chances during generation.', 'Inspeção: sorteios adicionais na primeira inspeção de cada ciclo de loot. Passar perto não consome o bônus. +200% faz dois sorteios extras; +50% faz um com metade das chances. Uma inspeção de dia consome a elegibilidade. Respawn real ou refresh do Extraction Mode renova o ciclo. Containers antigos precisam do próximo respawn. Anterior: multiplicar as chances durante a geração.'),
 }
 for level in range(1, 5):
     tips[f'NightLevel{level}Weight'] = ('Weights are normalized automatically. If every level weight is 0, Level 1 is selected.', 'Os pesos são normalizados automaticamente. Se todos forem 0, o nível 1 será selecionado.')
-    tips[f'NightLevel{level}LootBonus'] = ('Percent added to the original item spawn chance. A 50% bonus changes a 20% chance to 30%.', 'Percentual somado à chance original do item. Um bônus de 50% transforma uma chance de 20% em 30%.')
+    tips[f'NightLevel{level}LootBonus'] = ('Inspection mode: +200% gives two additional rolls; +50% gives one roll at half the normal chances. Only the first inspection in each loot cycle qualifies. Legacy mode multiplies the original spawn chances.', 'Modo de inspeção: +200% faz dois sorteios adicionais; +50% faz um sorteio com metade das chances normais. Só a primeira inspeção de cada ciclo de loot é elegível. O modo anterior multiplica as chances originais.')
     tips[f'NightLevel{level}SprinterPercentage'] = ('Chance for each zombie to become a sprinter during the night. Selected zombies return to their original speed during the day.', 'Chance de cada zumbi virar sprinter durante a noite. Os selecionados voltam à velocidade original durante o dia.')
 
 for language, index in [('EN', 0), ('PTBR', 1)]:
@@ -203,7 +208,7 @@ for _, d in config.definitions.items():
 (MEDIA / 'sandbox-options.txt').write_text('\n'.join(lines), encoding='utf-8')
 metadata = '\n'.join(['name=Survivor PDA Orchestrator', 'id=SurvivorPDAOrchestrator', 'author=Maeiro',
     'description=An adaptive event director for Survivor PDA (ProjectRPGExpanded), including configurable Night Events.',
-    'modversion=0.3.0', 'versionMin=42.21.0', 'require=ProjectRPGExpanded,ZombieBuddy',
+    'modversion=0.3.7', 'versionMin=42.21.0', 'require=ProjectRPGExpanded,ZombieBuddy',
     'loadModAfter=ProjectRPGExpanded,ExtractionMode,ZombieBuddy', ''])
 for file in [MOD / 'mod.info', MOD / '42/mod.info']:
     java_metadata = metadata

@@ -34,8 +34,11 @@ wall, hours = 1000000, 101; tick(); equal(stored.elapsed, 2, 'pause or stall doe
 wall, hours = 1001000, 102; tick(); equal(stored.elapsed, 3)
 local rows = g.rows; g.rows = {}; wall, hours = 1002000, 103; tick(); equal(stored.elapsed, 3, 'empty server')
 g.rows = rows
-Events.OnGameStart.handlers[1](); wall, hours = 2000000, 104; tick(); equal(stored.elapsed, 3, 'restart resets wall clock baseline')
-local request = Events.OnClientCommand.handlers[1]
+for _, handler in ipairs(Events.OnGameStart.handlers) do handler() end
+wall, hours = 2000000, 104; tick(); equal(stored.elapsed, 3, 'restart resets wall clock baseline')
+local request = function(...)
+    for _, handler in ipairs(Events.OnClientCommand.handlers) do handler(...) end
+end
 local normal, admin = {}, { admin = true }
 request('SPDO', 'Get', normal); equal(#sent, 0, 'non-admin diagnostic denied')
 request('SPDO', 'StartHorde', admin); equal(#sent, 0, 'no remote event-start command')

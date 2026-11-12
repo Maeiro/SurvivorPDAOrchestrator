@@ -9,6 +9,7 @@ local Settings = require 'PRPGE_Settings'
 local Night = require 'SPDO/Night'
 local Pause = require 'SPDO/Pause'
 require 'SPDO/NightSprinters'
+require 'SPDO/NightLoot'
 local instance, lastWall, lastHours, failures = nil, nil, nil, 0
 local requests = setmetatable({}, { __mode = 'k' })
 local lastForceAt

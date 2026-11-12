@@ -331,6 +331,15 @@ option ProjectRPGExpanded.SPDO_NightEventsChance
     max = 100,
 }
 
+option ProjectRPGExpanded.SPDO_NightLootMode
+{
+    type = enum,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLootMode,
+    default = 1,
+    numValues = 2,
+}
+
 option ProjectRPGExpanded.SPDO_NightLevel1Weight
 {
     type = integer,

@@ -140,7 +140,11 @@ if not Panel._spdoSection then
             if snapshot and snapshot.nightResult then
                 self:text(T(snapshot.nightResult), area.x + 4, area.y + 62, Skin.MUTED, UIFont.Small, area.w - 8)
             end
-            local listY = area.y + 88
+            if night and night.lootDiagnostic then
+                self:text(T('NightLootDiagnostics') .. ': ' .. night.lootDiagnostic,
+                    area.x + 4, area.y + 82, Skin.MUTED, UIFont.Small, area.w - 8)
+            end
+            local listY = area.y + 108
             local configArea = { x = area.x, y = listY, w = area.w, h = math.max(40, area.y + area.h - listY) }
             local defs = {}
             for _, d in ipairs(Config.definitions) do

@@ -136,6 +136,7 @@ local function refresh()
     local bridge = SurvivorPDAOrchestratorBridge
     if bridge and bridge.setNightLootState then
         bridge.setNightLootState(Night.active, Night.lootBonusPercent)
+        if bridge.setNightLootMode then bridge.setNightLootMode(Config.Get('NightLootMode')) end
     end
 end
 
@@ -179,6 +180,8 @@ function Night.Status()
         active = Night.active,
         level = Night.level,
         sprintersConverted = data and tonumber(data.sprintersConverted) or 0,
+        lootDiagnostic = SurvivorPDAOrchestratorBridge and SurvivorPDAOrchestratorBridge.nightLootDiagnostics
+            and SurvivorPDAOrchestratorBridge.nightLootDiagnostics() or nil,
     }
 end
 
