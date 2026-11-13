@@ -340,6 +340,14 @@ option ProjectRPGExpanded.SPDO_NightLootMode
     numValues = 2,
 }
 
+option ProjectRPGExpanded.SPDO_NightLootDiagnosticLog
+{
+    type = boolean,
+    page = SPDO_Orchestrator,
+    translation = SPDO_NightLootDiagnosticLog,
+    default = false,
+}
+
 option ProjectRPGExpanded.SPDO_NightLevel1Weight
 {
     type = integer,

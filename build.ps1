@@ -20,7 +20,7 @@ $sources = Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'src') -Recurse -
 if ($CompilerJar) {
     & (Join-Path $gameRoot 'jre64\bin\java.exe') -jar $CompilerJar -17 -warn:none -proc:none -cp $classpath -d $classes $sources.FullName
 } else {
-    & javac --release 17 -cp $classpath -d $classes $sources.FullName
+    & javac --release 17 -proc:none -cp $classpath -d $classes $sources.FullName
 }
 if ($LASTEXITCODE -ne 0) { throw 'Java compilation failed.' }
 & jar --create --file $output -C $classes maeiro

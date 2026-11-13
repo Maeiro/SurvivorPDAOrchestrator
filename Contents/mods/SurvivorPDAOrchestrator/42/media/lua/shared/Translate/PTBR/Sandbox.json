@@ -78,6 +78,8 @@
   "Sandbox_SPDO_NightLootMode_tooltip": "Inspeção: sorteios adicionais na primeira inspeção de cada ciclo de loot. Passar perto não consome o bônus. +200% faz dois sorteios extras; +50% faz um com metade das chances. Uma inspeção de dia consome a elegibilidade. Respawn real ou refresh do Extraction Mode renova o ciclo. Containers antigos precisam do próximo respawn. Anterior: multiplicar as chances durante a geração.",
   "Sandbox_SPDO_NightLootMode_option1": "Ao inspecionar — sorteios adicionais",
   "Sandbox_SPDO_NightLootMode_option2": "Durante a geração — comportamento anterior",
+  "Sandbox_SPDO_NightLootDiagnosticLog": "Logs de diagnóstico do loot noturno",
+  "Sandbox_SPDO_NightLootDiagnosticLog_tooltip": "Quando ativado, o console do servidor registra os sorteios de bônus, as distribuições verificadas, os itens realmente adicionados, containers ignorados e suas coordenadas. Desativado por padrão.",
   "Sandbox_SPDO_NightLevel1Weight": "Peso da chance do nível 1 (%)",
   "Sandbox_SPDO_NightLevel1Weight_tooltip": "Os pesos são normalizados automaticamente. Se todos forem 0, o nível 1 será selecionado.",
   "Sandbox_SPDO_NightLevel1LootBonus": "Bônus de chance de loot do nível 1 (%)",

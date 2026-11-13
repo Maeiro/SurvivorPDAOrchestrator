@@ -6,6 +6,14 @@ public final class Patches {
     private Patches() {
     }
 
+    @Patch(className = "zombie.gameStates.IngameState", methodName = "enter", warmUp = true)
+    public static class ExposeLuaBridge {
+        @Patch.OnEnter
+        public static void enter() {
+            Bridge.initialize();
+        }
+    }
+
     @Patch(className = "zombie.inventory.ItemPickerJava", methodName = "fillContainer", warmUp = true)
     public static class NightLootFill {
         @Patch.OnEnter

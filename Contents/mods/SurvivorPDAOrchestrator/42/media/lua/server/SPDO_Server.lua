@@ -93,9 +93,10 @@ local function tick()
     end
 end
 
-local function request(p, command)
+local function request(p, command, args)
     local allowed = command == 'Get' or command == 'SimulateDecision' or command == 'ForceDecision'
-        or command == 'StartNightEvent' or command == 'EndNightEvent'
+        or command == 'StartNightEvent' or command == 'EndNightEvent' or command == 'SetNightLevel'
+        or command == 'SetNightLootDiagnostics'
     if not Game.Authority() or not allowed or not p or not SettingsServer.CanEdit(p) then return false end
     if not (isServer and isServer()) and require('PRPGE_Settings').Get('AdminPanelEnabled') ~= true then return false end
     local now = Game.Milliseconds()
@@ -130,6 +131,32 @@ local function request(p, command)
             requestResult = 'InternalError'
             print('[Survivor PDA Orchestrator] Manual Night Event action failed: ' .. tostring(accepted))
         end
+    elseif command == 'SetNightLevel' then
+        local level = type(args) == 'table' and tonumber(args.level) or nil
+        if level and level == math.floor(level) and level >= 1 and level <= 4 then
+            local called, accepted, result = pcall(Night.SetManualLevel, level)
+            requestResult = called and (result or (accepted and 'NightLevelChanged' or 'NightUnavailable')) or 'InternalError'
+            if not called then print('[Survivor PDA Orchestrator] Manual Night Event level failed: ' .. tostring(accepted)) end
+        else
+            requestResult = 'NightUnavailable'
+        end
+    elseif command == 'SetNightLootDiagnostics' then
+        local enabled = type(args) == 'table' and args.enabled
+        if type(enabled) == 'boolean' then
+            local saved = SettingsServer.Commit({ SPDO_NightLootDiagnosticLog = enabled })
+            requestResult = saved and (enabled and 'NightDiagnosticsEnabled' or 'NightDiagnosticsDisabled') or 'NightSettingsFailed'
+            if saved then
+                Night.refresh()
+                if getOnlinePlayers and SettingsServer.Respond then
+                    local players = getOnlinePlayers()
+                    for i = 0, players:size() - 1 do SettingsServer.Respond(players:get(i)) end
+                elseif SettingsServer.Respond then
+                    SettingsServer.Respond(p)
+                end
+            end
+        else
+            requestResult = 'NightSettingsFailed'
+        end
     end
     local snapshot
     if instance then
@@ -141,7 +168,8 @@ local function request(p, command)
         snapshot.simulation = success and value or { reason = 'InternalError' }
     end
     if requestResult then snapshot.requestResult = requestResult end
-    if command == 'StartNightEvent' or command == 'EndNightEvent' then snapshot.nightResult = requestResult end
+    if command == 'StartNightEvent' or command == 'EndNightEvent' or command == 'SetNightLevel'
+        or command == 'SetNightLootDiagnostics' then snapshot.nightResult = requestResult end
     local statusOK, nightStatus = pcall(Night.Status)
     if statusOK then snapshot.night = nightStatus end
     if isServer and isServer() then sendServerCommand(p, 'SPDO', 'Snapshot', snapshot)
@@ -149,9 +177,9 @@ local function request(p, command)
     return true
 end
 
-SPDO_Request = function(p, command)
+SPDO_Request = function(p, command, args)
     if (isClient and isClient()) or (isServer and isServer()) or (isMultiplayer and isMultiplayer()) then return false end
-    return request(p, command)
+    return request(p, command, args)
 end
 
 if Events.OnInitGlobalModData then Events.OnInitGlobalModData.Add(initialize) end
@@ -163,8 +191,8 @@ if Events.OnTickEvenPaused then
     end)
 end
 if Events.OnClientCommand then
-    Events.OnClientCommand.Add(function(module, command, p)
-        if module == 'SPDO' then request(p, command) end
+    Events.OnClientCommand.Add(function(module, command, p, args)
+        if module == 'SPDO' then request(p, command, args) end
     end)
 end
 if Events.OnPlayerDeath then

@@ -11,6 +11,7 @@ local nightMessages = {
 }
 local dawnMessage = 'DawnAlert'
 local lastNightCycle
+local lastNightLevel
 local nightWasActive = false
 local nightIntroAt
 
@@ -35,23 +36,28 @@ local function updateNightNotice(player)
         if not Night.enabled then
             nightWasActive = false
             lastNightCycle = Night.nightCycle
+            lastNightLevel = nil
         elseif Night.isNight then
             lastNightCycle = Night.nightCycle
+            nightWasActive = false
+            lastNightLevel = nil
         elseif nightWasActive then
             showNotice(player, Text.Text(dawnMessage), { 175, 215, 255 })
             nightWasActive = false
+            lastNightLevel = nil
         end
         return
     end
     if Night.isNight then
         if not Night.levelReady then return end
-        if not nightWasActive or lastNightCycle ~= Night.nightCycle then
+        if not nightWasActive or lastNightCycle ~= Night.nightCycle or lastNightLevel ~= Night.level then
             local notice = nightMessages[tonumber(Night.level) or 1] or nightMessages[1]
             showNotice(player, Text.Text(notice.key), notice.color)
             nightIntroAt = getTimestampMs and getTimestampMs() or 0
             pcall(function() require('PRPGE_PDA').Sound('XPEvent') end)
             nightWasActive = true
             lastNightCycle = Night.nightCycle
+            lastNightLevel = Night.level
         end
     elseif nightWasActive then
         showNotice(player, Text.Text(dawnMessage), { 175, 215, 255 })

@@ -19,7 +19,7 @@ local function clock(seconds)
     return string.format('%02d:%02d:%02d', math.floor(seconds / 3600), math.floor(seconds / 60) % 60, seconds % 60)
 end
 
-local function request(self, command)
+local function request(self, command, args)
     command = command or 'Get'
     local now = getTimestampMs()
     local delay = command == 'Get' and 5000 or 3000
@@ -28,8 +28,9 @@ local function request(self, command)
     requestedAt[command] = now
     local p = self.player or getSpecificPlayer(0)
     if not p then return false end
-    if isClient and isClient() then sendClientCommand(p, 'SPDO', command, {})
-    elseif SPDO_Request then SPDO_Request(p, command) end
+    args = args or {}
+    if isClient and isClient() then sendClientCommand(p, 'SPDO', command, args)
+    elseif SPDO_Request then SPDO_Request(p, command, args) end
     return true
 end
 
@@ -144,12 +145,28 @@ if not Panel._spdoSection then
                 self:text(T('NightLootDiagnostics') .. ': ' .. night.lootDiagnostic,
                     area.x + 4, area.y + 82, Skin.MUTED, UIFont.Small, area.w - 8)
             end
-            local listY = area.y + 108
+            local levelWidth = math.floor((area.w - 18) / 4)
+            for level = 1, 4 do
+                local selectedLevel = level
+                local x = area.x + (level - 1) * (levelWidth + 6)
+                self:key({ x = x, y = area.y + 108, w = levelWidth, h = 36 }, T('NightLevelButton') .. ' ' .. level,
+                    function() request(self, 'SetNightLevel', { level = selectedLevel }) end,
+                    night and night.active and tonumber(night.level) == selectedLevel and 'gold' or nil,
+                    nil, T('NightLevelButtonTip'), 'spdoNightLevel' .. selectedLevel)
+            end
+            local diagnosticsEnabled = night and night.lootDiagnosticLogging == true
+            self:key({ x = area.x, y = area.y + 152, w = area.w, h = 36 },
+                T(diagnosticsEnabled and 'NightLootLogOn' or 'NightLootLogOff'),
+                function() request(self, 'SetNightLootDiagnostics', { enabled = not diagnosticsEnabled }) end,
+                diagnosticsEnabled and 'gold' or nil, nil, T('NightLootLogTip'), 'spdoNightLootDiagnostics')
+            local listY = area.y + 196
             local configArea = { x = area.x, y = listY, w = area.w, h = math.max(40, area.y + area.h - listY) }
             local defs = {}
             for _, d in ipairs(Config.definitions) do
                 local name = d.key:sub(6)
-                if name:sub(1, 5) == 'Night' then defs[#defs + 1] = Settings.BY_KEY[d.key] end
+                if name:sub(1, 5) == 'Night' and name ~= 'NightLootDiagnosticLog' then
+                    defs[#defs + 1] = Settings.BY_KEY[d.key]
+                end
             end
             self:list('spdoNightConfig', configArea, #defs, 40, function(i, rr) self:settingRow(defs[i], rr) end)
             return

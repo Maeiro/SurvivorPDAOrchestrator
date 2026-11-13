@@ -78,6 +78,8 @@
   "Sandbox_SPDO_NightLootMode_tooltip": "Inspection: additional rolls on the first inspection of each loot cycle. Passing nearby does not consume the bonus. +200% gives two extra rolls; +50% gives one at half chances. A daytime inspection consumes eligibility. Real loot respawn or Extraction Mode refresh renews it. Existing containers need their next respawn. Legacy: multiply chances during generation.",
   "Sandbox_SPDO_NightLootMode_option1": "On inspection — additional rolls",
   "Sandbox_SPDO_NightLootMode_option2": "During generation — legacy behavior",
+  "Sandbox_SPDO_NightLootDiagnosticLog": "Night loot diagnostic logging",
+  "Sandbox_SPDO_NightLootDiagnosticLog_tooltip": "When enabled, the server console logs bonus rolls, distributions checked, items actually added, skipped containers, and their coordinates. Disabled by default.",
   "Sandbox_SPDO_NightLevel1Weight": "Level 1 chance weight (%)",
   "Sandbox_SPDO_NightLevel1Weight_tooltip": "Weights are normalized automatically. If every level weight is 0, Level 1 is selected.",
   "Sandbox_SPDO_NightLevel1LootBonus": "Level 1 loot chance bonus (%)",

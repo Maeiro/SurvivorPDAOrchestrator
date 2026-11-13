@@ -29,12 +29,14 @@ local function process(zombie)
         return
     end
 
-    if data[checkedNightKey] == Night.nightCycle then
+    local check = tostring(Night.nightCycle) .. ':' .. tostring(Night.level)
+    if data[checkedNightKey] == check then
         if data[sprinterKey] and zombie:getSpeedType() ~= 1 then zombie:doSprinter() end
         return
     end
 
-    data[checkedNightKey] = Night.nightCycle
+    if data[sprinterKey] then restoreSpeed(zombie, data) end
+    data[checkedNightKey] = check
     if Night.sprinterPercentage == 0 or zombie:isCrawling()
         or ZombRand(100) >= Night.sprinterPercentage then return end
 

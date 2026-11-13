@@ -137,6 +137,9 @@ local function refresh()
     if bridge and bridge.setNightLootState then
         bridge.setNightLootState(Night.active, Night.lootBonusPercent)
         if bridge.setNightLootMode then bridge.setNightLootMode(Config.Get('NightLootMode')) end
+        if bridge.setNightLootDiagnosticLogging then
+            bridge.setNightLootDiagnosticLogging(Config.Get('NightLootDiagnosticLog') == true)
+        end
     end
 end
 
@@ -156,6 +159,27 @@ function Night.StartManual()
     transmit()
     refresh()
     return true, 'NightStarted'
+end
+
+function Night.SetManualLevel(level)
+    level = tonumber(level)
+    if not level or level ~= math.floor(level) or level < 1 or level > 4 then return false, 'NightUnavailable' end
+    refresh()
+    if not Night.enabled then return false, 'NightDisabled' end
+    if not Night.isNight then return false, 'NightNotNight' end
+    if not ModData or not ModData.getOrCreate then return false, 'NightUnavailable' end
+
+    local data = ModData.getOrCreate(nightDataKey)
+    local wasActive = tonumber(data.nightCycle) == Night.nightCycle and data.active == true
+    local levelChanged = tonumber(data.level) ~= level
+    data.nightCycle = Night.nightCycle
+    data.nightOpen = true
+    data.active = true
+    data.level = level
+    if not wasActive or levelChanged then data.sprintersConverted = 0 end
+    transmit()
+    refresh()
+    return true, wasActive and 'NightLevelChanged' or 'NightStarted'
 end
 
 function Night.EndManual()
@@ -179,6 +203,7 @@ function Night.Status()
         isNight = Night.isNight,
         active = Night.active,
         level = Night.level,
+        lootDiagnosticLogging = Config.Get('NightLootDiagnosticLog') == true,
         sprintersConverted = data and tonumber(data.sprintersConverted) or 0,
         lootDiagnostic = SurvivorPDAOrchestratorBridge and SurvivorPDAOrchestratorBridge.nightLootDiagnostics
             and SurvivorPDAOrchestratorBridge.nightLootDiagnostics() or nil,

@@ -37,9 +37,11 @@ public final class NightLoot {
     private static final Map<String, ItemPickerContainer> distributions = new HashMap<>();
     private static final IdentityHashMap<ItemPickerRoom, String> roomIds = new IdentityHashMap<>();
     private static Object registryRoot;
+    private static int registryProceduralCount = -1;
     private static Method roll;
     private static Method updateRoom;
     private static volatile int mode = 1;
+    private static volatile boolean diagnosticLogging;
     private static long generated, inspected, rewarded, skipped, failures;
     private static String lastReason = "Ready";
 
@@ -87,6 +89,10 @@ public final class NightLoot {
 
     public static void setMode(int value) {
         mode = value == 2 ? 2 : 1;
+    }
+
+    public static void setDiagnosticLogging(boolean enabled) {
+        diagnosticLogging = enabled;
     }
 
     public static boolean eligible(ItemContainer container) {
@@ -173,6 +179,11 @@ public final class NightLoot {
             fill.data.rawset("nativeBonus", fill.nativeBonus);
             putState(fill.container, fill.data);
             generated++;
+            if (diagnosticLogging && mode == 2 && fill.nativeBonus) {
+                log("generation bonus=" + Math.max(0, Math.round((Bridge.nightLootMultiplier() - 1.0f) * 100))
+                        + "% distributions=" + ((KahluaTable) fill.data.rawget("rolls")).len()
+                        + " added=" + addedCount(fill.container, fill.before) + " " + location(fill.container));
+            }
         } catch (Exception | LinkageError failure) {
             failed(failure);
         }
@@ -199,17 +210,26 @@ public final class NightLoot {
                     || Math.abs(player.getX() - (container.getSourceGrid().getX() + 0.5f)) > 3
                     || Math.abs(player.getY() - (container.getSourceGrid().getY() + 0.5f)) > 3) return false;
             KahluaTable data = state(container);
-            if (data == null || !(data.rawget("version") instanceof Number version) || version.intValue() != 1) return skip("NoHistory");
+            if (data == null || !(data.rawget("version") instanceof Number version) || version.intValue() != 1) return skip("NoHistory", percent, container);
             if (Boolean.TRUE.equals(data.rawget("inspected"))) return false;
-            data.rawset("inspected", true);
-            container.getParent().flagForHotSave();
-            inspected++;
-            if (container.isHasBeenLooted()) return skip("AlreadyLooted");
-            if (mode != 1 || percent <= 0 || Boolean.TRUE.equals(data.rawget("nativeBonus"))) return false;
-            if (Boolean.TRUE.equals(data.rawget("unsupported"))) return skip("NoDistribution");
+            if (container.isHasBeenLooted()) {
+                markInspected(data, container);
+                return skip("AlreadyLooted", percent, container);
+            }
+            if (mode != 1 || percent <= 0 || Boolean.TRUE.equals(data.rawget("nativeBonus"))) {
+                markInspected(data, container);
+                return false;
+            }
+            if (Boolean.TRUE.equals(data.rawget("unsupported"))) {
+                markInspected(data, container);
+                return skip("NoDistribution", percent, container);
+            }
             registry();
             KahluaTable entries = (KahluaTable) data.rawget("rolls");
-            if (entries == null || entries.len() == 0) return skip("NoDistribution");
+            if (entries == null || entries.len() == 0) {
+                markInspected(data, container);
+                return skip("NoDistribution", percent, container);
+            }
             List<ItemPickerContainer> resolved = new ArrayList<>();
             List<ItemPickerRoom> rooms = new ArrayList<>();
             for (int i = 1; i <= entries.len(); i++) {
@@ -217,7 +237,10 @@ public final class NightLoot {
                 ItemPickerContainer dist = distributions.get(entry.rawget("distribution"));
                 String roomId = (String) entry.rawget("room");
                 ItemPickerRoom room = roomId == null ? null : ItemPickerJava.rooms.get(roomId);
-                if (dist == null || (roomId != null && room == null)) return skip("NoDistribution");
+                if (dist == null || (roomId != null && room == null)) {
+                    markInspected(data, container);
+                    return skip("NoDistribution", percent, container);
+                }
                 resolved.add(dist);
                 rooms.add(room);
             }
@@ -230,6 +253,7 @@ public final class NightLoot {
                 updateRoom = ItemPickInfo.class.getDeclaredMethod("updateRoomDist", ItemPickerRoom.class);
                 updateRoom.setAccessible(true);
             }
+            markInspected(data, container);
             List<InventoryItem> before = new ArrayList<>(container.getItems());
             try {
                 for (int remaining = Math.min(500, percent); remaining > 0; remaining -= 100) {
@@ -246,12 +270,18 @@ public final class NightLoot {
                 for (InventoryItem item : new ArrayList<>(container.getItems())) {
                     if (!before.contains(item)) container.Remove(item);
                 }
+                data.rawset("inspected", false);
+                container.getParent().flagForHotSave();
                 throw failure;
             } finally {
                 bonus.remove();
             }
             rewarded++;
             lastReason = "Applied";
+            if (diagnosticLogging) {
+                log("inspection bonus=" + percent + "% distributions=" + entries.len()
+                        + " added=" + addedCount(container, before) + " " + location(container));
+            }
             ItemPickerJava.updateOverlaySprite(container.getParent());
             return !before.equals(container.getItems());
         } catch (Exception | LinkageError failure) {
@@ -264,19 +294,41 @@ public final class NightLoot {
         return generated + "/" + inspected + "/" + rewarded + "/" + skipped + "/" + failures + " (" + lastReason + ")";
     }
 
-    private static boolean skip(String reason) {
+    private static boolean skip(String reason, int percent, ItemContainer container) {
         skipped++;
-        if (!reason.equals(lastReason)) System.out.println("[Survivor PDA Orchestrator] Night loot: " + reason);
+        if (diagnosticLogging) log("inspection skipped=" + reason + " bonus=" + percent + "% " + location(container));
         lastReason = reason;
         return false;
+    }
+
+    private static void markInspected(KahluaTable data, ItemContainer container) {
+        data.rawset("inspected", true);
+        container.getParent().flagForHotSave();
+        inspected++;
     }
 
     private static void failed(Throwable failure) {
         failures++;
         while (failure instanceof InvocationTargetException && failure.getCause() != null) failure = failure.getCause();
         String reason = failure.getClass().getSimpleName() + ": " + failure.getMessage();
-        if (!reason.equals(lastReason)) System.out.println("[Survivor PDA Orchestrator] Night loot failed: " + reason);
+        if (!reason.equals(lastReason)) System.out.println("[Survivor PDA Orchestrator] Night loot operation failed: " + reason);
         lastReason = reason;
+    }
+
+    private static int addedCount(ItemContainer container, List<InventoryItem> before) {
+        int count = 0;
+        for (InventoryItem item : container.getItems()) if (!before.contains(item)) count++;
+        return count;
+    }
+
+    private static String location(ItemContainer container) {
+        IsoObject object = container == null ? null : container.getParent();
+        if (object == null || object.getSquare() == null) return "container=" + (container == null ? "unknown" : container.getType());
+        return "container=" + container.getType() + " at=" + object.getX() + "," + object.getY() + "," + object.getZ();
+    }
+
+    private static void log(String message) {
+        System.out.println("[Survivor PDA Orchestrator] Night loot diagnostic: " + message);
     }
 
     private static KahluaTable table() {
@@ -316,7 +368,8 @@ public final class NightLoot {
 
     private static void registry() {
         Object all = ItemPickerJava.rooms.get("all");
-        if (all == registryRoot && !distributionIds.isEmpty()) return;
+        int proceduralCount = ItemPickerJava.ProceduralDistributions.size();
+        if (all == registryRoot && proceduralCount == registryProceduralCount && !distributionIds.isEmpty()) return;
         distributionIds.clear();
         distributions.clear();
         roomIds.clear();
@@ -326,15 +379,13 @@ public final class NightLoot {
                 register("room/" + entry.getKey() + "\n" + dist.getKey(), dist.getValue());
             }
         }
-        // ProceduralDistributions is package-private in the game; resolve its concrete tables through the public lookup.
-        for (Map.Entry<String, ItemPickerRoom> entry : ItemPickerJava.rooms.entrySet()) {
-            for (Map.Entry<String, ItemPickerContainer> dist : entry.getValue().containers.entrySet()) {
-                if (!dist.getValue().procedural || dist.getValue().proceduralItems == null) continue;
-                for (ItemPickerJava.ProceduralItem proc : dist.getValue().proceduralItems) {
-                    register("proc/" + proc.name, ItemPickerJava.getItemContainer(entry.getKey(), dist.getKey(), proc.name, false));
-                }
+        for (Object value : ItemPickerJava.ProceduralDistributions.entrySet()) {
+            if (value instanceof Map.Entry<?, ?> entry && entry.getKey() instanceof String id
+                    && entry.getValue() instanceof ItemPickerContainer dist) {
+                register("proc/" + id, dist);
             }
         }
         registryRoot = all;
+        registryProceduralCount = proceduralCount;
     }
 }

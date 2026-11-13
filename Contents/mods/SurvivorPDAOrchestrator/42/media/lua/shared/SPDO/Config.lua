@@ -45,6 +45,7 @@ for stage, chance in ipairs({ 10, 15, 20, 25, 30 }) do define('ThreatChance' .. 
 define('NightEventsEnabled', false)
 define('NightEventsChance', 50, 0, 100)
 define('NightLootMode', 1, 1, 2, { 'SPDO_LootOnInspection', 'SPDO_LootOnGeneration' })
+define('NightLootDiagnosticLog', false)
 local nightLevels = {
     { weight = 50, lootBonus = 50, sprinterPercentage = 10 },
     { weight = 35, lootBonus = 100, sprinterPercentage = 20 },

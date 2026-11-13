@@ -45,6 +45,7 @@ labels = {
     'NightEventsEnabled': ('Enable Night Events', 'Ativar eventos noturnos'),
     'NightEventsChance': ('Night Event chance per night (%)', 'Chance de Night Event por noite (%)'),
     'NightLootMode': ('Night loot bonus mode', 'Modo do bônus de loot noturno'),
+    'NightLootDiagnosticLog': ('Night loot diagnostic logging', 'Logs de diagnóstico do loot noturno'),
 }
 for level in range(1, 5):
     labels[f'NightLevel{level}Weight'] = (f'Level {level} chance weight (%)', f'Peso da chance do nível {level} (%)')
@@ -54,6 +55,11 @@ strings = {
     'LootOnInspection': ('On inspection — additional rolls', 'Ao inspecionar — sorteios adicionais'),
     'LootOnGeneration': ('During generation — legacy behavior', 'Durante a geração — comportamento anterior'),
     'NightLootDiagnostics': ('Loot: generated / inspected / bonuses / skipped / errors', 'Loot: gerados / inspecionados / bônus / ignorados / erros'),
+    'NightLevelButton': ('Level', 'Nível'),
+    'NightLevelButtonTip': ('Start the Night Event at this level, or change the active level for tonight.', 'Inicia o Night Event neste nível ou altera o nível ativo desta noite.'),
+    'NightLootLogOn': ('Night loot diagnostics: ON', 'Diagnóstico do loot noturno: ATIVADO'),
+    'NightLootLogOff': ('Night loot diagnostics: OFF', 'Diagnóstico do loot noturno: DESATIVADO'),
+    'NightLootLogTip': ('Toggle detailed console logs showing the loot bonus, distributions checked, items actually added, and container coordinates. Off by default.', 'Ativa ou desativa logs detalhados no console com o bônus, distribuições verificadas, itens realmente adicionados e coordenadas do container. Desativado por padrão.'),
     'HighTension': ('Group still recovering from recent pressure', 'Grupo ainda se recuperando da pressão recente'),
     'GroupRest': ('Group resting after a director attack', 'Grupo descansando após ataque do diretor'),
     'OpportunityBudget': ('Bonus budget reached; waiting', 'Limite de bônus atingido; aguardando'),
@@ -98,6 +104,10 @@ strings = {
     'NightAlreadyActive': ('A Night Event is already active.', 'Já existe um evento noturno ativo.'),
     'NightNotActive': ('There is no active Night Event to end.', 'Não há evento noturno ativo para encerrar.'),
     'NightUnavailable': ('Night Event state is unavailable.', 'O estado do evento noturno está indisponível.'),
+    'NightLevelChanged': ('Night Event level changed.', 'Nível do Night Event alterado.'),
+    'NightDiagnosticsEnabled': ('Night loot diagnostic logging enabled.', 'Logs de diagnóstico do loot noturno ativados.'),
+    'NightDiagnosticsDisabled': ('Night loot diagnostic logging disabled.', 'Logs de diagnóstico do loot noturno desativados.'),
+    'NightSettingsFailed': ('Could not save the Night Event setting.', 'Não foi possível salvar a configuração do Night Event.'),
     'NightAlert1': ('A small stroke of luck. Something fast is hunting nearby.', 'Uma pequena dose de sorte. Algo rápido está caçando por perto.'),
     'NightAlert2': ('Fortune smiles, but the dead are moving faster. Stay sharp.', 'A fortuna sorri, mas os mortos estão mais rápidos. Fique atento.'),
     'NightAlert3': ('The night offers riches. The dead are running in numbers. Keep moving.', 'A noite oferece riquezas. Os mortos correm em bandos. Não pare.'),
@@ -169,6 +179,7 @@ tips = {
     'NightEventsEnabled': ('Off by default. Each night, the configured weights select one level that increases container loot chances and the chance for zombies to become sprinters.', 'Desativado por padrão. A cada noite, os pesos configurados sorteiam um nível que aumenta a chance de loot nos containers e a chance de zumbis virarem sprinters.'),
     'NightEventsChance': ('When Night Events are enabled, this is the chance that the event occurs on each night. The level is rolled only when the event occurs.', 'Com os eventos noturnos ativados, esta é a chance de o evento ocorrer a cada noite. O nível só é sorteado quando o evento acontece.'),
     'NightLootMode': ('Inspection: additional rolls on the first inspection of each loot cycle. Passing nearby does not consume the bonus. +200% gives two extra rolls; +50% gives one at half chances. A daytime inspection consumes eligibility. Real loot respawn or Extraction Mode refresh renews it. Existing containers need their next respawn. Legacy: multiply chances during generation.', 'Inspeção: sorteios adicionais na primeira inspeção de cada ciclo de loot. Passar perto não consome o bônus. +200% faz dois sorteios extras; +50% faz um com metade das chances. Uma inspeção de dia consome a elegibilidade. Respawn real ou refresh do Extraction Mode renova o ciclo. Containers antigos precisam do próximo respawn. Anterior: multiplicar as chances durante a geração.'),
+    'NightLootDiagnosticLog': ('When enabled, the server console logs bonus rolls, distributions checked, items actually added, skipped containers, and their coordinates. Disabled by default.', 'Quando ativado, o console do servidor registra os sorteios de bônus, as distribuições verificadas, os itens realmente adicionados, containers ignorados e suas coordenadas. Desativado por padrão.'),
 }
 for level in range(1, 5):
     tips[f'NightLevel{level}Weight'] = ('Weights are normalized automatically. If every level weight is 0, Level 1 is selected.', 'Os pesos são normalizados automaticamente. Se todos forem 0, o nível 1 será selecionado.')
@@ -208,7 +219,7 @@ for _, d in config.definitions.items():
 (MEDIA / 'sandbox-options.txt').write_text('\n'.join(lines), encoding='utf-8')
 metadata = '\n'.join(['name=Survivor PDA Orchestrator', 'id=SurvivorPDAOrchestrator', 'author=Maeiro',
     'description=An adaptive event director for Survivor PDA (ProjectRPGExpanded), including configurable Night Events.',
-    'modversion=0.3.7', 'versionMin=42.21.0', 'require=ProjectRPGExpanded,ZombieBuddy',
+    'modversion=0.3.8', 'versionMin=42.21.0', 'require=ProjectRPGExpanded,ZombieBuddy',
     'loadModAfter=ProjectRPGExpanded,ExtractionMode,ZombieBuddy', ''])
 for file in [MOD / 'mod.info', MOD / '42/mod.info']:
     java_metadata = metadata
